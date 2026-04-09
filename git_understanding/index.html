@@ -1,1230 +1,2398 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FAANG-Ready Curriculum | CS Core & CS Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
-<style>
-  :root {
-    --bg: #060810;
-    --surface: #0d1117;
-    --surface2: #141b26;
-    --border: rgba(255,255,255,0.07);
-    --core-start: #00d4aa;
-    --core-end: #0099ff;
-    --pro-start: #ff6b35;
-    --pro-end: #ff0080;
-    --gold: #ffd700;
-    --text: #e8edf5;
-    --muted: #5a6680;
-    --accent: #00d4aa;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    overflow-x: hidden;
-    line-height: 1.6;
-  }
-
-  /* ── NOISE OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
-  }
-
-  /* ── HERO ── */
-  .hero {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 6rem 2rem 4rem;
-    overflow: hidden;
-  }
-
-  .hero-glow {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(120px);
-    pointer-events: none;
-  }
-  .hero-glow.g1 {
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(0,212,170,0.12) 0%, transparent 70%);
-    top: -100px; left: -200px;
-    animation: drift1 12s ease-in-out infinite alternate;
-  }
-  .hero-glow.g2 {
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(255,0,128,0.10) 0%, transparent 70%);
-    bottom: -50px; right: -150px;
-    animation: drift2 14s ease-in-out infinite alternate;
-  }
-  .hero-glow.g3 {
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(0,153,255,0.08) 0%, transparent 70%);
-    top: 40%; left: 50%;
-    transform: translate(-50%,-50%);
-  }
-
-  @keyframes drift1 { from { transform: translate(0,0); } to { transform: translate(60px, 40px); } }
-  @keyframes drift2 { from { transform: translate(0,0); } to { transform: translate(-40px, -60px); } }
-
-  .eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.25em;
-    color: var(--core-start);
-    text-transform: uppercase;
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.2s forwards;
-  }
-
-  .hero h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(3rem, 8vw, 7rem);
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.4s forwards;
-  }
-
-  .hero h1 .gradient-core {
-    background: linear-gradient(135deg, var(--core-start), var(--core-end));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .hero h1 .gradient-pro {
-    background: linear-gradient(135deg, var(--pro-start), var(--pro-end));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .hero-sub {
-    max-width: 640px;
-    font-size: 1.1rem;
-    color: var(--muted);
-    margin-bottom: 3rem;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.6s forwards;
-  }
-
-  .track-pills {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.8s forwards;
-  }
-
-  .pill {
-    padding: 0.6rem 1.4rem;
-    border-radius: 100px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    border: 1px solid;
-    cursor: default;
-  }
-  .pill.core {
-    background: rgba(0,212,170,0.08);
-    border-color: rgba(0,212,170,0.3);
-    color: var(--core-start);
-  }
-  .pill.pro {
-    background: rgba(255,107,53,0.08);
-    border-color: rgba(255,107,53,0.3);
-    color: var(--pro-start);
-  }
-  .pill.faang {
-    background: rgba(255,215,0,0.08);
-    border-color: rgba(255,215,0,0.3);
-    color: var(--gold);
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── SECTION WRAPPER ── */
-  .section {
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 5rem 2rem;
-  }
-
-  .section-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.5rem;
-  }
-
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(1.8rem, 4vw, 2.8rem);
-    font-weight: 700;
-    line-height: 1.1;
-    margin-bottom: 1rem;
-  }
-
-  .section-desc {
-    color: var(--muted);
-    max-width: 560px;
-    font-size: 0.95rem;
-    margin-bottom: 3rem;
-  }
-
-  /* ── TRACK OVERVIEW CARDS ── */
-  .tracks-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  @media (max-width: 768px) { .tracks-grid { grid-template-columns: 1fr; } }
-
-  .track-card {
-    position: relative;
-    border-radius: 20px;
-    padding: 2.5rem;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .track-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 24px 60px rgba(0,0,0,0.4);
-  }
-
-  .track-card.core::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(0,212,170,0.06) 0%, transparent 60%);
-    pointer-events: none;
-  }
-  .track-card.pro::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,107,53,0.07) 0%, transparent 60%);
-    pointer-events: none;
-  }
-
-  .track-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 1rem;
-    border-radius: 100px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 1.5rem;
-  }
-  .track-badge.core { background: rgba(0,212,170,0.15); color: var(--core-start); }
-  .track-badge.pro  { background: rgba(255,107,53,0.15);  color: var(--pro-start); }
-
-  .track-card h3 {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.7rem;
-    font-weight: 800;
-    margin-bottom: 0.5rem;
-  }
-  .track-card .duration {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 2.5rem;
-    font-weight: 700;
-    line-height: 1;
-    margin-bottom: 1rem;
-  }
-  .track-card.core .duration { color: var(--core-start); }
-  .track-card.pro  .duration { color: var(--pro-start); }
-
-  .track-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
-
-  .outcome-tag {
-    display: inline-block;
-    padding: 0.3rem 0.8rem;
-    border-radius: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    font-weight: 500;
-    background: rgba(255,215,0,0.1);
-    color: var(--gold);
-    border: 1px solid rgba(255,215,0,0.2);
-  }
-
-  /* ── PHASE TIMELINE ── */
-  .timeline {
-    position: relative;
-    padding-left: 2rem;
-  }
-  .timeline::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0; bottom: 0;
-    width: 2px;
-    background: linear-gradient(to bottom, var(--core-start), var(--core-end), var(--pro-start), var(--pro-end));
-    border-radius: 2px;
-  }
-
-  .phase-block {
-    position: relative;
-    margin-bottom: 2.5rem;
-    opacity: 0;
-    transform: translateX(-12px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-  .phase-block.visible { opacity: 1; transform: translateX(0); }
-
-  .phase-dot {
-    position: absolute;
-    left: -2.35rem;
-    top: 0.4rem;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    border: 2px solid var(--bg);
-  }
-  .phase-dot.core { background: var(--core-start); box-shadow: 0 0 12px rgba(0,212,170,0.6); }
-  .phase-dot.pro  { background: var(--pro-start);  box-shadow: 0 0 12px rgba(255,107,53,0.6); }
-
-  .phase-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .phase-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    color: var(--muted);
-    text-transform: uppercase;
-  }
-
-  .phase-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.25rem;
-    font-weight: 700;
-  }
-
-  .phase-weeks {
-    margin-left: auto;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 100px;
-    background: var(--surface2);
-    color: var(--muted);
-    white-space: nowrap;
-  }
-
-  .phase-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-
-  .topic-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.6rem;
-    font-size: 0.875rem;
-  }
-  .topic-item .icon {
-    font-size: 1rem;
-    flex-shrink: 0;
-    margin-top: 0.05rem;
-  }
-  .topic-item .label { color: var(--text); font-weight: 400; }
-  .topic-item .sublabel { color: var(--muted); font-size: 0.78rem; display: block; margin-top: 0.1rem; }
-
-  /* ── DIVIDER ── */
-  .track-divider {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin: 3rem 0;
-  }
-  .track-divider::before, .track-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-  .track-divider-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    background: var(--surface);
-  }
-
-  /* ── COMPANY LOGOS MARQUEE ── */
-  .marquee-section {
-    position: relative;
-    padding: 3rem 0;
-    overflow: hidden;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-  }
-  .marquee-label {
-    text-align: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 1.5rem;
-  }
-  .marquee-track {
-    display: flex;
-    gap: 3rem;
-    animation: marquee 25s linear infinite;
-    width: max-content;
-  }
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
-  }
-  .company-chip {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.6rem 1.5rem;
-    border-radius: 100px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    font-family: 'Syne', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 600;
-    white-space: nowrap;
-    color: var(--text);
-  }
-  .company-chip .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--gold);
-  }
-
-  /* ── SKILLS GRID ── */
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1rem;
-  }
-
-  .skill-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    transition: border-color 0.3s, transform 0.3s;
-  }
-  .skill-card:hover {
-    border-color: rgba(255,255,255,0.15);
-    transform: translateY(-2px);
-  }
-
-  .skill-icon {
-    font-size: 1.8rem;
-    margin-bottom: 0.75rem;
-  }
-  .skill-card h4 {
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 0.4rem;
-  }
-  .skill-card p {
-    font-size: 0.82rem;
-    color: var(--muted);
-  }
-  .skill-level {
-    display: flex;
-    gap: 0.3rem;
-    margin-top: 0.75rem;
-  }
-  .level-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--border);
-  }
-  .level-dot.active.core { background: var(--core-start); }
-  .level-dot.active.pro  { background: var(--pro-start); }
-
-  /* ── WEEKLY BREAKDOWN TABLE ── */
-  .week-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-  }
-  .week-table th {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    padding: 0.75rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-  }
-  .week-table td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    vertical-align: top;
-  }
-  .week-table tr:hover td { background: rgba(255,255,255,0.02); }
-
-  .week-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-  .week-phase-tag {
-    display: inline-block;
-    padding: 0.2rem 0.6rem;
-    border-radius: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-  .week-phase-tag.core { background: rgba(0,212,170,0.12); color: var(--core-start); }
-  .week-phase-tag.pro  { background: rgba(255,107,53,0.12);  color: var(--pro-start); }
-
-  .week-topic { font-weight: 400; color: var(--text); }
-  .week-deliverable { color: var(--muted); font-size: 0.78rem; margin-top: 0.2rem; }
-
-  /* ── ROADMAP PATH ── */
-  .roadmap {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    position: relative;
-  }
-
-  .rm-step {
-    display: flex;
-    align-items: stretch;
-    gap: 0;
-  }
-
-  .rm-left {
-    width: 140px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    padding-right: 1.5rem;
-    padding-top: 0.25rem;
-  }
-
-  .rm-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 24px;
-    flex-shrink: 0;
-  }
-  .rm-circle {
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    font-weight: 700;
-    flex-shrink: 0;
-    border: 2px solid;
-    z-index: 1;
-  }
-  .rm-circle.core {
-    background: rgba(0,212,170,0.15);
-    border-color: var(--core-start);
-    color: var(--core-start);
-  }
-  .rm-circle.pro {
-    background: rgba(255,107,53,0.15);
-    border-color: var(--pro-start);
-    color: var(--pro-start);
-  }
-  .rm-circle.gold {
-    background: rgba(255,215,0,0.15);
-    border-color: var(--gold);
-    color: var(--gold);
-  }
-  .rm-line {
-    flex: 1;
-    width: 2px;
-    background: var(--border);
-    margin: 4px 0;
-  }
-
-  .rm-right {
-    flex: 1;
-    padding: 0 0 2rem 1.5rem;
-  }
-  .rm-right h4 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    margin-bottom: 0.3rem;
-  }
-  .rm-right p { color: var(--muted); font-size: 0.85rem; }
-
-  .rm-week-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.68rem;
-    color: var(--muted);
-    text-align: right;
-  }
-  .rm-week-range {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-align: right;
-    color: var(--text);
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 3rem 2rem;
-    text-align: center;
-    color: var(--muted);
-    font-size: 0.82rem;
-  }
-  footer strong { color: var(--text); }
-
-  /* ── SCROLL ANIMATIONS ── */
-  .reveal {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-
-  /* ── STICKY NAV ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 2rem;
-    background: rgba(6,8,16,0.85);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-logo {
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-  }
-  .nav-logo span { color: var(--core-start); }
-  .nav-links {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-  }
-  .nav-links a {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--text); }
-  @media (max-width: 600px) {
-    .nav-links { display: none; }
-  }
-
-  /* ── STAT STRIP ── */
-  .stat-strip {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 0;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    margin-bottom: 4rem;
-  }
-  .stat-item {
-    padding: 1.5rem;
-    border-right: 1px solid var(--border);
-    text-align: center;
-  }
-  .stat-item:last-child { border-right: none; }
-  .stat-value {
-    font-family: 'Syne', sans-serif;
-    font-size: 2rem;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 0.3rem;
-  }
-  .stat-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  .grad-core { background: linear-gradient(135deg, var(--core-start), var(--core-end)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  .grad-pro  { background: linear-gradient(135deg, var(--pro-start), var(--pro-end));   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  .grad-gold { color: var(--gold); }
-</style>
-</head>
-<body>
-
-<!-- NAV -->
-<nav>
-  <div class="nav-logo">CODE<span>X</span></div>
-  <ul class="nav-links">
-    <li><a href="#overview">Overview</a></li>
-    <li><a href="#curriculum">Curriculum</a></li>
-    <li><a href="#weekly">Weekly Plan</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-  </ul>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-glow g1"></div>
-  <div class="hero-glow g2"></div>
-  <div class="hero-glow g3"></div>
-  <p class="eyebrow">// FAANG-Ready Engineering Curriculum</p>
-  <h1>
-    <span class="gradient-core">CS Core</span><br/>
-    <span style="color:var(--muted); font-size:0.5em; font-weight:400; letter-spacing:-0.01em;">CONTINUES INTO</span><br/>
-    <span class="gradient-pro">CS Pro</span>
-  </h1>
-  <p class="hero-sub">A dual-track, 44-week program engineered to take you from zero to landing SDE-1 roles at Google, Meta, Uber, and top-tier tech companies.</p>
-  <div class="track-pills">
-    <div class="pill core">22 Weeks → Junior / Associate</div>
-    <div class="pill pro">44 Weeks → FAANG SDE-1</div>
-    <div class="pill faang">DSA · MERN · Cloud · AI · Docker</div>
-  </div>
-</section>
-
-<!-- OVERVIEW -->
-<div id="overview" style="position:relative;z-index:1;">
-  <div class="section">
-    <p class="section-label">// Track Overview</p>
-    <h2 class="section-title">Two Tracks.<br/>One Continuous Journey.</h2>
-    <p class="section-desc">Start with CS Core. Exit early with confidence, or push through CS Pro and compete for the biggest roles in the industry.</p>
-
-    <div class="tracks-grid reveal">
-      <div class="track-card core">
-        <div class="track-badge core">📘 CS Core</div>
-        <h3>Foundation &amp; Fundamentals</h3>
-        <div class="duration">22 <span style="font-size:1rem;color:var(--muted);">weeks</span></div>
-        <p>Master the fundamentals of DSA, full-stack development with MERN, and modern deployment practices. Graduate ready for junior/associate roles at startups and mid-scale companies.</p>
-        <div class="outcome-tag">🎯 Junior / Associate SWE</div>
-      </div>
-      <div class="track-card pro">
-        <div class="track-badge pro">🔥 CS Pro</div>
-        <h3>Advanced &amp; Interview-Ready</h3>
-        <div class="duration">44 <span style="font-size:1rem;color:var(--muted);">weeks</span></div>
-        <p>Built directly on top of CS Core. Dive deep into advanced DSA, system design, AI/ML integration, cloud architecture and everything it takes to crack FAANG-level interviews.</p>
-        <div class="outcome-tag">🏆 SDE-1 at FAANG / Unicorns</div>
-      </div>
-    </div>
-
-    <div class="stat-strip reveal">
-      <div class="stat-item">
-        <div class="stat-value grad-core">22</div>
-        <div class="stat-label">Core Weeks</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value grad-pro">22</div>
-        <div class="stat-label">Pro Weeks</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value grad-gold">6</div>
-        <div class="stat-label">Tech Pillars</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value" style="color:var(--text);">500+</div>
-        <div class="stat-label">DSA Problems</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value" style="color:var(--text);">10+</div>
-        <div class="stat-label">Real Projects</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value grad-gold">∞</div>
-        <div class="stat-label">Mock Interviews</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- COMPANIES MARQUEE -->
-<div class="marquee-section">
-  <div class="marquee-label">// Target Companies After Completion</div>
-  <div class="marquee-track" id="marqueeTrack">
-    <div class="company-chip"><span class="dot"></span>Google</div>
-    <div class="company-chip"><span class="dot"></span>Meta</div>
-    <div class="company-chip"><span class="dot"></span>Amazon</div>
-    <div class="company-chip"><span class="dot"></span>Microsoft</div>
-    <div class="company-chip"><span class="dot"></span>Uber</div>
-    <div class="company-chip"><span class="dot"></span>Apple</div>
-    <div class="company-chip"><span class="dot"></span>Netflix</div>
-    <div class="company-chip"><span class="dot"></span>Stripe</div>
-    <div class="company-chip"><span class="dot"></span>Airbnb</div>
-    <div class="company-chip"><span class="dot"></span>LinkedIn</div>
-    <div class="company-chip"><span class="dot"></span>Twitter / X</div>
-    <div class="company-chip"><span class="dot"></span>Figma</div>
-    <div class="company-chip"><span class="dot"></span>Notion</div>
-    <div class="company-chip"><span class="dot"></span>Atlassian</div>
-    <!-- duplicate for seamless loop -->
-    <div class="company-chip"><span class="dot"></span>Google</div>
-    <div class="company-chip"><span class="dot"></span>Meta</div>
-    <div class="company-chip"><span class="dot"></span>Amazon</div>
-    <div class="company-chip"><span class="dot"></span>Microsoft</div>
-    <div class="company-chip"><span class="dot"></span>Uber</div>
-    <div class="company-chip"><span class="dot"></span>Apple</div>
-    <div class="company-chip"><span class="dot"></span>Netflix</div>
-    <div class="company-chip"><span class="dot"></span>Stripe</div>
-    <div class="company-chip"><span class="dot"></span>Airbnb</div>
-    <div class="company-chip"><span class="dot"></span>LinkedIn</div>
-    <div class="company-chip"><span class="dot"></span>Twitter / X</div>
-    <div class="company-chip"><span class="dot"></span>Figma</div>
-    <div class="company-chip"><span class="dot"></span>Notion</div>
-    <div class="company-chip"><span class="dot"></span>Atlassian</div>
-  </div>
-</div>
-
-<!-- CURRICULUM PHASES -->
-<div id="curriculum" style="position:relative;z-index:1;">
-  <div class="section">
-    <p class="section-label">// Curriculum Breakdown</p>
-    <h2 class="section-title">Phase by Phase.<br/>Week by Week.</h2>
-    <p class="section-desc">Every phase is intentionally sequenced. Skills compound. Nothing is taught in isolation.</p>
-
-    <!-- CS CORE HEADER -->
-    <div class="track-divider">
-      <div class="track-divider-label" style="color:var(--core-start);border-color:rgba(0,212,170,0.3);background:rgba(0,212,170,0.06);">📘 CS CORE — Weeks 1–22</div>
-    </div>
-
-    <div class="timeline" id="coreTimeline">
-
-      <!-- Phase 1 -->
-      <div class="phase-block">
-        <div class="phase-dot core"></div>
-        <div class="phase-header">
-          <span class="phase-num">Phase 01</span>
-          <span class="phase-title">Programming Foundations &amp; CS Basics</span>
-          <span class="phase-weeks">Weeks 1–3</span>
-        </div>
-        <div class="phase-card">
-          <div class="topic-item"><span class="icon">⚡</span><div><span class="label">JavaScript Fundamentals</span><span class="sublabel">Variables, loops, functions, closures, async/await</span></div></div>
-          <div class="topic-item"><span class="icon">🧠</span><div><span class="label">How Computers Work</span><span class="sublabel">Memory, CPU, OS basics, processes</span></div></div>
-          <div class="topic-item"><span class="icon">📟</span><div><span class="label">Command Line Mastery</span><span class="sublabel">Bash, scripting, file systems, permissions</span></div></div>
-          <div class="topic-item"><span class="icon">🔀</span><div><span class="label">Git &amp; Version Control</span><span class="sublabel">Branching, PRs, merge strategies, GitHub flow</span></div></div>
-          <div class="topic-item"><span class="icon">🎯</span><div><span class="label">Problem-Solving Framework</span><span class="sublabel">Decomposition, pseudocode, debugging</span></div></div>
-          <div class="topic-item"><span class="icon">📐</span><div><span class="label">Big-O Notation Intro</span><span class="sublabel">Time &amp; space complexity concepts</span></div></div>
-        </div>
-      </div>
-
-      <!-- Phase 2 -->
-      <div class="phase-block">
-        <div class="phase-dot core"></div>
-        <div class="phase-header">
-          <span class="phase-num">Phase 02</span>
-          <span class="phase-title">DSA — Arrays, Strings &amp; Linear Structures</span>
-          <span class="phase-weeks">Weeks 4–7</span>
-        </div>
-        <div class="phase-card">
-          <div class="topic-item"><span class="icon">📊</span><div><span class="label">Arrays &amp; Strings</span><span class="sublabel">Two pointers, sliding window, prefix sums</span></div></div>
-          <div class="topic-item"><span class="icon">🔗</span><div><span class="label">Linked Lists</span><span class="sublabel">Singly, doubly, fast/slow pointers</span></div></div>
-          <div class="topic-item"><span class="icon">📚</span><div><span class="label">Stacks &amp; Queues</span><span class="sublabel">Monotonic stacks, deques, LRU cache</span></div></div>
-          <div class="topic-item"><span class="icon">🗂️</span><div><span class="label">Hash Maps &amp; Sets</span><span class="sublabel">Collision handling, frequency maps, grouping</span></div></div>
-          <div class="topic-item"><span class="icon">💡</span><div><span class="label">Sorting Algorithms</span><span class="sublabel">Merge, quick, counting sort — comparisons</span></div></div>
-          <div class="topic-item"><span class="icon">🎯</span><div><span class="label">LeetCode Easy → Medium</span><span class="sublabel">100+ problems, timed practice sessions</span></div></div>
-        </div>
-      </div>
-
-      <!-- Phase 3 -->
-      <div class="phase-block">
-        <div class="phase-dot core"></div>
-        <div class="phase-header">
-          <span class="phase-num">Phase 03</span>
-          <span class="phase-title">Frontend — React &amp; Modern UI</span>
-          <span class="phase-weeks">Weeks 8–11</span>
-        </div>
-        <div class="phase-card">
-          <div class="topic-item"><span class="icon">🌐</span><div><span class="label">HTML5 / CSS3 Deep Dive</span><span class="sublabel">Flexbox, Grid, animations, responsive design</span></div></div>
-          <div class="topic-item"><span class="icon">⚛️</span><div><span class="label">React Fundamentals</span><span class="sublabel">JSX, hooks, state, props, lifting state</span></div></div>
-          <div class="topic-item"><span class="icon">🧩</span><div><span class="label">React Advanced Patterns</span><span class="sublabel">Context, custom hooks, React Router</span></div></div>
-          <div class="topic-item"><span class="icon">🗃️</span><div><span class="label">State Management</span><span class="sublabel">Redux Toolkit, Zustand, React Query</span></div></div>
-          <div class="topic-item"><span class="icon">🎨</span><div><span class="label">Tailwind CSS &amp; Design Systems</span><span class="sublabel">Utility-first CSS, component libraries</span></div></div>
-          <div class="topic-item"><span class="icon">🚀</span><div><span class="label">Project: Full UI App</span><span class="sublabel">Build a multi-page CRUD app with auth UI</span></div></div>
-        </div>
-      </div>
-
-      <!-- Phase 4 -->
-      <div class="phase-block">
-        <div class="phase-dot core"></div>
-        <div class="phase-header">
-          <span class="phase-num">Phase 04</span>
-          <span class="phase-title">Backend — Node.js, Express &amp; Databases</span>
-          <span class="phase-weeks">Weeks 12–16</span>
-        </div>
-        <div class="phase-card">
-          <div class="topic-item"><span class="icon">🟢</span><div><span class="label">Node.js Internals</span><span class="sublabel">Event loop, streams, modules, fs/http</span></div></div>
-          <div class="topic-item"><span class="icon">🛤️</span><div><span class="label">Express.js &amp; REST APIs</span><span class="sublabel">Routing, middleware, error handling, auth</span></div></div>
-          <div class="topic-item"><span class="icon">🍃</span><div><span class="label">MongoDB &amp; Mongoose</span><span class="sublabel">Schema design, aggregation, indexing</span></div></div>
-          <div class="topic-item"><span class="icon">🐘</span><div><span class="label">PostgreSQL &amp; SQL</span><span class="sublabel">Joins, transactions, ACID, query optimization</span></div></div>
-          <div class="topic-item"><span class="icon">🔐</span><div><span class="label">Auth &amp; Security</span><span class="sublabel">JWT, OAuth2, bcrypt, CORS, rate limiting</span></div></div>
-          <div class="topic-item"><span class="icon">🚀</span><div><span class="label">Project: Full REST API</span><span class="sublabel">Auth + CRUD + DB — production-ready backend</span></div></div>
-        </div>
-      </div>
-
-      <!-- Phase 5 -->
-      <div class="phase-block">
-        <div class="phase-dot core"></div>
-        <div class="phase-header">
-          <span class="phase-num">Phase 05</span>
-          <span class="phase-title">DevOps Basics — Docker &amp; Cloud Intro</span>
-          <span class="phase-weeks">Weeks 17–19</span>
-        </div>
-        <div class="phase-card">
-          <div class="topic-item"><span class="icon">🐳</span><div><span class="label">Docker Fundamentals</span><span class="sublabel">Images, containers, Dockerfile, volumes</span></div></div>
-          <div class="topic-item"><span class="icon">🔧</span><div><span class="label">Docker Compose</span><span class="sublabel">Multi-service apps, networking, env vars</span></div></div>
-          <div class="topic-item"><span class="icon">☁️</span><div><span class="label">Cloud Intro — AWS / GCP</span><span class="sublabel">EC2, S3, Lambda basics, IAM roles</span></div></div>
-          <div class="topic-item"><span class="icon">🔄</span><div><span class="label">CI/CD Pipelines</span><span class="sublabel">GitHub Actions, automated testing &amp; deploy</span></div></div>
-          <div class="topic-item"><span class="icon">📊</span><div><span class="label">Monitoring Basics</span><span class="sublabel">Logs, uptime, basic metrics with CloudWatch</span></div></div>
-          <div class="topic-item"><span class="icon">🚀</span><div><span class="label">Project: Containerize &amp; Deploy</span><span class="sublabel">Dockerize MERN app, deploy on AWS</span></div></div>
-        </div>
-      </div>
-
-      <!-- Phase 6 -->
-      <div class="phase-block">
-        <div class="phase-dot core"></div>
-        <div class="phase-header">
-          <span class="phase-num">Phase 06</span>
-          <span class="phase-title">CS Core Capstone &amp; Interview Prep</span>
-          <span class="phase-weeks">Weeks 20–22</span>
-        </div>
-        <div class="phase-card">
-          <div class="topic-item"><span class="icon">🏗️</span><div><span class="label">Capstone Full-Stack Project</span><span class="sublabel">End-to-end MERN app, deployed to cloud</span></div></div>
-          <div class="topic-item"><span class="icon">🎤</span><div><span class="label">Mock Technical Interviews</span><span class="sublabel">DSA rounds, code-aloud sessions</span></div></div>
-          <div class="topic-item"><span class="icon">📝</span><div><span class="label">Resume &amp; Portfolio</span><span class="sublabel">GitHub profile, project write-ups, LinkedIn</span></div></div>
-          <div class="topic-item"><span class="icon">🔍</span><div><span class="label">Job Application Strategy</span><span class="sublabel">Cold outreach, referrals, application funnels</span></div></div>
-          <div class="topic-item"><span class="icon">💬</span><div><span class="label">Behavioral Interviews</span><span class="sublabel">STAR method, situational prep, culture fit</span></div></div>
-          <div class="topic-item"><span class="icon">🏆</span><div><span class="label">Exit: Junior / Associate Role</span><span class="sublabel">Ready for real-world engineering positions</span></div></div>
-        </div>
-      </div>
-
-    </div><!-- end core timeline -->
-
-    <!-- CS PRO HEADER -->
-    <div class="track-divider" style="margin-top:4rem;">
-      <div class="track-divider-label" style="color:var(--pro-start);border-color:rgba(255,107,53,0.3);background:rgba(255,107,53,0.06);">🔥 CS PRO — Weeks 23–44 (Continuation)</div>
-    </div>
-
-    <div class="timeline" id="proTimeline" style="--timeline-color: var(--pro-start);">
-
-      <!-- Phase 7 -->
-      <div class="phase-block">
-        <div class="phase-dot pro"></div>
-        <div class="phase-header">
-          <span class="phase-num">Phase 07</span>
-          <span class="phase-title">Advanced DSA — Trees, Graphs &amp; DP</span>
-          <span class="phase-weeks">Weeks 23–27</span>
-        </div>
-        <div class="phase-card">
-          <div class="topic-item"><span class="icon">🌲</span><div><span class="label">Binary Trees &amp; BST</span><span class="sublabel">Traversals, construction, validation, LCA</span></div></div>
-          <div class="topic-item"><span class="icon">🕸️</span><div><span class="label">Graphs (BFS/DFS)</span><span class="sublabel">Adjacency list/matrix, cycle detection, topo sort</span></div></div>
-          <div class="topic-item"><span class="icon">🔑</span><div><span class="label">Advanced Graph Algorithms</span><span class="sublabel">Dijkstra, Bellman-Ford, Prim's, Kruskal's</span></div></div>
-          <div class="topic-item"><span class="icon">🧮</span><div><span class="label">Dynamic Programming</span><span class="sublabel">Memoization, tabulation, LCS, knapsack, DP on graphs</span></div></div>
-          <div class="topic-item"><span class="icon">🔢</span><div><span class="label">Heaps &amp; Priority Queues</span><span class="sublabel">Min/max heap, k-th element, Dijkstra internals</span></div></div>
-          <div class="topic-item"><span class="icon">🎯</span><div><span class="label">LeetCode Hard Grind</span><span class="sublabel">200+ medium/hard, timed, FAANG problem sets</span></div></div>
-        </div>
-      </div>
-
-      <!-- Phase 8 -->
-      <div class="phase-block">
-        <div class="phase-dot pro"></div>
-        <div class="phase-header">
-          <span class="phase-num">Phase 08</span>
-          <span class="phase-title">System Design — Fundamentals to Advanced</span>
-          <span class="phase-weeks">Weeks 28–31</span>
-        </div>
-        <div class="phase-card">
-          <div class="topic-item"><span class="icon">🏛️</span><div><span class="label">System Design Principles</span><span class="sublabel">Scalability, availability, reliability tradeoffs</span></div></div>
-          <div class="topic-item"><span class="icon">⚖️</span><div><span class="label">Load Balancing &amp; CDN</span><span class="sublabel">Round robin, consistent hashing, edge caching</span></div></div>
-          <div class="topic-item"><span class="icon">🗄️</span><div><span class="label">Database Scaling</span><span class="sublabel">Sharding, replication, CAP theorem, eventual consistency</span></div></div>
-          <div class="topic-item"><span class="icon">📨</span><div><span class="label">Message Queues &amp; Kafka</span><span class="sublabel">Async processing, pub/sub, event-driven architecture</span></div></div>
-          <div class="topic-item"><span class="icon">🔴</span><div><span class="label">Caching — Redis</span><span class="sublabel">Eviction policies, cache invalidation, write-through</span></div></div>
-          <div class="topic-item"><span class="icon">📐</span><div><span class="label">Design: URL Shortener, Twitter, Uber</span><span class="sublabel">End-to-end FAANG-style design sessions</span></div></div>
-        </div>
-      </div>
-
-      <!-- Phase 9 -->
-      <div class="phase-block">
-        <div class="phase-dot pro"></div>
-        <div class="phase-header">
-          <span class="phase-num">Phase 09</span>
-          <span class="phase-title">Cloud Architecture — AWS / GCP Advanced</span>
-          <span class="phase-weeks">Weeks 32–35</span>
-        </div>
-        <div class="phase-card">
-          <div class="topic-item"><span class="icon">☁️</span><div><span class="label">Cloud Architecture Patterns</span><span class="sublabel">Microservices, serverless, event-driven</span></div></div>
-          <div class="topic-item"><span class="icon">⚙️</span><div><span class="label">Kubernetes (K8s)</span><span class="sublabel">Pods, deployments, services, HPA, ingress</span></div></div>
-          <div class="topic-item"><span class="icon">🏗️</span><div><span class="label">Infrastructure as Code</span><span class="sublabel">Terraform, CloudFormation, CDK</span></div></div>
-          <div class="topic-item"><span class="icon">🔒</span><div><span class="label">Cloud Security</span><span class="sublabel">IAM deep dive, VPC, secrets management, Zero Trust</span></div></div>
-          <div class="topic-item"><span class="icon">📈</span><div><span class="label">Observability Stack</span><span class="sublabel">Prometheus, Grafana, ELK, distributed tracing</span></div></div>
-          <div class="topic-item"><span class="icon">🚀</span><div><span class="label">Project: Cloud-Native App</span><span class="sublabel">Microservices on K8s, IaC, full observability</span></div></div>
-        </div>
-      </div>
-
-      <!-- Phase 10 -->
-      <div class="phase-block">
-        <div class="phase-dot pro"></div>
-        <div class="phase-header">
-          <span class="phase-num">Phase 10</span>
-          <span class="phase-title">AI / ML Engineering Integration</span>
-          <span class="phase-weeks">Weeks 36–39</span>
-        </div>
-        <div class="phase-card">
-          <div class="topic-item"><span class="icon">🤖</span><div><span class="label">ML Fundamentals for SWE</span><span class="sublabel">Supervised/unsupervised, model evaluation, bias-variance</span></div></div>
-          <div class="topic-item"><span class="icon">🐍</span><div><span class="label">Python for AI/ML</span><span class="sublabel">NumPy, Pandas, scikit-learn, data pipelines</span></div></div>
-          <div class="topic-item"><span class="icon">🧠</span><div><span class="label">LLM &amp; GenAI Integration</span><span class="sublabel">OpenAI API, LangChain, RAG, prompt engineering</span></div></div>
-          <div class="topic-item"><span class="icon">🔌</span><div><span class="label">AI-Powered APIs</span><span class="sublabel">Build and deploy AI-backed REST services</span></div></div>
-          <div class="topic-item"><span class="icon">📦</span><div><span class="label">ML Model Deployment</span><span class="sublabel">FastAPI, model versioning, A/B testing, MLOps basics</span></div></div>
-          <div class="topic-item"><span class="icon">🚀</span><div><span class="label">Project: AI SaaS Feature</span><span class="sublabel">Integrate LLM into MERN app, deploy on cloud</span></div></div>
-        </div>
-      </div>
-
-      <!-- Phase 11 -->
-      <div class="phase-block">
-        <div class="phase-dot pro"></div>
-        <div class="phase-header">
-          <span class="phase-num">Phase 11</span>
-          <span class="phase-title">FAANG Interview Intensive</span>
-          <span class="phase-weeks">Weeks 40–42</span>
-        </div>
-        <div class="phase-card">
-          <div class="topic-item"><span class="icon">🎯</span><div><span class="label">Pattern Mastery</span><span class="sublabel">14 core patterns: BFS, DP, Trie, Union-Find…</span></div></div>
-          <div class="topic-item"><span class="icon">⏱️</span><div><span class="label">Timed Mock Interviews</span><span class="sublabel">Daily coding rounds, Google/Meta style</span></div></div>
-          <div class="topic-item"><span class="icon">🏗️</span><div><span class="label">System Design Mocks</span><span class="sublabel">Design Netflix, Slack, Google Docs — full rounds</span></div></div>
-          <div class="topic-item"><span class="icon">🧑‍💼</span><div><span class="label">Behavioral Deep Dive</span><span class="sublabel">Leadership principles, conflict, ownership stories</span></div></div>
-          <div class="topic-item"><span class="icon">💰</span><div><span class="label">Negotiation &amp; Offers</span><span class="sublabel">Competing offers, TC breakdown, negotiation scripts</span></div></div>
-          <div class="topic-item"><span class="icon">📋</span><div><span class="label">Company-Specific Prep</span><span class="sublabel">Google, Meta, Amazon culture &amp; process drills</span></div></div>
-        </div>
-      </div>
-
-      <!-- Phase 12 -->
-      <div class="phase-block">
-        <div class="phase-dot pro"></div>
-        <div class="phase-header">
-          <span class="phase-num">Phase 12</span>
-          <span class="phase-title">CS Pro Capstone &amp; Launch</span>
-          <span class="phase-weeks">Weeks 43–44</span>
-        </div>
-        <div class="phase-card">
-          <div class="topic-item"><span class="icon">🏆</span><div><span class="label">Capstone Project</span><span class="sublabel">Full-stack AI-powered app, cloud-deployed, containerized</span></div></div>
-          <div class="topic-item"><span class="icon">📁</span><div><span class="label">Portfolio Finalization</span><span class="sublabel">5 production projects, case studies, GitHub readme</span></div></div>
-          <div class="topic-item"><span class="icon">🔗</span><div><span class="label">Network &amp; Apply</span><span class="sublabel">Referral campaigns, LinkedIn optimized, applications live</span></div></div>
-          <div class="topic-item"><span class="icon">🎓</span><div><span class="label">Graduation &amp; Certification</span><span class="sublabel">CS Pro certificate, cohort alumni network</span></div></div>
-          <div class="topic-item"><span class="icon">🎤</span><div><span class="label">Final Mock Gauntlet</span><span class="sublabel">Full FAANG loop: 4 technical + 1 system + 2 behavioral</span></div></div>
-          <div class="topic-item"><span class="icon">🚀</span><div><span class="label">Exit: SDE-1 at FAANG</span><span class="sublabel">Ready to compete for top-tier engineering roles</span></div></div>
-        </div>
-      </div>
-
-    </div><!-- end pro timeline -->
-
-  </div>
-</div>
-
-<!-- WEEKLY SCHEDULE SAMPLE -->
-<div id="weekly" style="position:relative;z-index:1;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
-  <div class="section">
-    <p class="section-label">// Sample Weekly Breakdown</p>
-    <h2 class="section-title">What Each Week<br/>Looks Like.</h2>
-    <p class="section-desc">Every week follows a structured rhythm: learn → build → practice → review.</p>
-    <div class="reveal" style="overflow-x:auto; border:1px solid var(--border); border-radius:16px;">
-      <table class="week-table">
-        <thead>
-          <tr>
-            <th>Week</th>
-            <th>Track</th>
-            <th>Primary Topic</th>
-            <th>DSA Focus</th>
-            <th>Deliverable</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td class="week-num">W01</td><td><span class="week-phase-tag core">Core</span></td><td class="week-topic">JS Fundamentals</td><td style="color:var(--muted);font-size:.8rem;">Variables, functions, closures</td><td><div class="week-deliverable">10 JS exercises + CLI quiz app</div></td></tr>
-          <tr><td class="week-num">W02</td><td><span class="week-phase-tag core">Core</span></td><td class="week-topic">Git + CS Basics</td><td style="color:var(--muted);font-size:.8rem;">Big-O intro, complexity analysis</td><td><div class="week-deliverable">Collaborative repo + complexity cheat sheet</div></td></tr>
-          <tr><td class="week-num">W03</td><td><span class="week-phase-tag core">Core</span></td><td class="week-topic">Arrays &amp; Strings</td><td style="color:var(--muted);font-size:.8rem;">Two pointers, sliding window</td><td><div class="week-deliverable">20 LeetCode Easy problems</div></td></tr>
-          <tr><td class="week-num">W04</td><td><span class="week-phase-tag core">Core</span></td><td class="week-topic">Linked Lists</td><td style="color:var(--muted);font-size:.8rem;">Fast/slow pointers, reversal</td><td><div class="week-deliverable">Implement LinkedList + 15 problems</div></td></tr>
-          <tr><td class="week-num">W05</td><td><span class="week-phase-tag core">Core</span></td><td class="week-topic">Stacks &amp; Queues</td><td style="color:var(--muted);font-size:.8rem;">Monotonic stack, sliding window max</td><td><div class="week-deliverable">Mini LRU Cache implementation</div></td></tr>
-          <tr><td class="week-num">W08</td><td><span class="week-phase-tag core">Core</span></td><td class="week-topic">React Basics</td><td style="color:var(--muted);font-size:.8rem;">—</td><td><div class="week-deliverable">Todo App with hooks + routing</div></td></tr>
-          <tr><td class="week-num">W12</td><td><span class="week-phase-tag core">Core</span></td><td class="week-topic">Node + Express</td><td style="color:var(--muted);font-size:.8rem;">—</td><td><div class="week-deliverable">REST API with auth middleware</div></td></tr>
-          <tr><td class="week-num">W17</td><td><span class="week-phase-tag core">Core</span></td><td class="week-topic">Docker Basics</td><td style="color:var(--muted);font-size:.8rem;">—</td><td><div class="week-deliverable">Dockerize MERN app, compose file</div></td></tr>
-          <tr><td class="week-num">W22</td><td><span class="week-phase-tag core">Core</span></td><td class="week-topic">Core Capstone</td><td style="color:var(--muted);font-size:.8rem;">Final DSA review + mock</td><td><div class="week-deliverable">Full-stack deployed app + resume</div></td></tr>
-          <tr><td class="week-num">W23</td><td><span class="week-phase-tag pro">Pro</span></td><td class="week-topic">Binary Trees</td><td style="color:var(--muted);font-size:.8rem;">DFS, BFS, LCA, construction</td><td><div class="week-deliverable">25 Tree problems (med/hard)</div></td></tr>
-          <tr><td class="week-num">W26</td><td><span class="week-phase-tag pro">Pro</span></td><td class="week-topic">Dynamic Programming</td><td style="color:var(--muted);font-size:.8rem;">Memoization, DP on intervals</td><td><div class="week-deliverable">DP pattern sheet + 30 problems</div></td></tr>
-          <tr><td class="week-num">W28</td><td><span class="week-phase-tag pro">Pro</span></td><td class="week-topic">System Design I</td><td style="color:var(--muted);font-size:.8rem;">—</td><td><div class="week-deliverable">Design URL Shortener (full doc)</div></td></tr>
-          <tr><td class="week-num">W32</td><td><span class="week-phase-tag pro">Pro</span></td><td class="week-topic">Kubernetes</td><td style="color:var(--muted);font-size:.8rem;">—</td><td><div class="week-deliverable">Deploy microservices to K8s cluster</div></td></tr>
-          <tr><td class="week-num">W36</td><td><span class="week-phase-tag pro">Pro</span></td><td class="week-topic">LLM Integration</td><td style="color:var(--muted);font-size:.8rem;">—</td><td><div class="week-deliverable">AI-powered chatbot API with RAG</div></td></tr>
-          <tr><td class="week-num">W40</td><td><span class="week-phase-tag pro">Pro</span></td><td class="week-topic">FAANG Intensive</td><td style="color:var(--muted);font-size:.8rem;">Hard: Trie, union-find, DP</td><td><div class="week-deliverable">3 full mock interview loops</div></td></tr>
-          <tr><td class="week-num">W44</td><td><span class="week-phase-tag pro">Pro</span></td><td class="week-topic">Pro Capstone</td><td style="color:var(--muted);font-size:.8rem;">Final gauntlet</td><td><div class="week-deliverable">AI cloud app + offer negotiation</div></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ROADMAP -->
-<div id="roadmap" style="position:relative;z-index:1;">
-  <div class="section">
-    <p class="section-label">// Student Journey</p>
-    <h2 class="section-title">Your Path From<br/>Zero to FAANG.</h2>
-    <p class="section-desc">Every student starts at the same place. Where you exit is up to you.</p>
-
-    <div class="roadmap reveal">
-      <div class="rm-step">
-        <div class="rm-left"><div class="rm-week-label">START</div><div class="rm-week-range">Week 0</div></div>
-        <div class="rm-center"><div class="rm-circle core">S</div><div class="rm-line"></div></div>
-        <div class="rm-right"><h4>Enroll in CS Core</h4><p>Every student begins here. No prerequisites required — just commitment.</p></div>
-      </div>
-      <div class="rm-step">
-        <div class="rm-left"><div class="rm-week-range">W1–W7</div></div>
-        <div class="rm-center"><div class="rm-circle core">1</div><div class="rm-line"></div></div>
-        <div class="rm-right"><h4>Programming Foundations + DSA Basics</h4><p>JavaScript, Git, arrays, linked lists, stacks, hash maps, 100+ problems.</p></div>
-      </div>
-      <div class="rm-step">
-        <div class="rm-left"><div class="rm-week-range">W8–W16</div></div>
-        <div class="rm-center"><div class="rm-circle core">2</div><div class="rm-line"></div></div>
-        <div class="rm-right"><h4>MERN Full-Stack Development</h4><p>React, Node.js, Express, MongoDB, PostgreSQL, REST APIs, JWT auth.</p></div>
-      </div>
-      <div class="rm-step">
-        <div class="rm-left"><div class="rm-week-range">W17–W19</div></div>
-        <div class="rm-center"><div class="rm-circle core">3</div><div class="rm-line"></div></div>
-        <div class="rm-right"><h4>Docker + Cloud Fundamentals</h4><p>Containerization, CI/CD, AWS basics, deploy your first cloud app.</p></div>
-      </div>
-      <div class="rm-step">
-        <div class="rm-left"><div class="rm-week-label">EXIT 1</div><div class="rm-week-range">W22</div></div>
-        <div class="rm-center"><div class="rm-circle gold">✓</div><div class="rm-line"></div></div>
-        <div class="rm-right"><h4 style="color:var(--gold);">CS Core Graduate 🏅</h4><p style="color:var(--gold);opacity:0.7;">Junior / Associate SWE ready. Full-stack skills, deployed project, 150+ DSA solved.</p></div>
-      </div>
-      <div class="rm-step">
-        <div class="rm-left"><div class="rm-week-range">W23–W27</div></div>
-        <div class="rm-center"><div class="rm-circle pro">4</div><div class="rm-line"></div></div>
-        <div class="rm-right"><h4>Advanced DSA — Trees, Graphs, DP</h4><p>Binary trees, graph algorithms, dynamic programming, 200+ medium/hard problems.</p></div>
-      </div>
-      <div class="rm-step">
-        <div class="rm-left"><div class="rm-week-range">W28–W31</div></div>
-        <div class="rm-center"><div class="rm-circle pro">5</div><div class="rm-line"></div></div>
-        <div class="rm-right"><h4>System Design Mastery</h4><p>Scalability, databases, caching, Kafka, design real FAANG-scale systems.</p></div>
-      </div>
-      <div class="rm-step">
-        <div class="rm-left"><div class="rm-week-range">W32–W35</div></div>
-        <div class="rm-center"><div class="rm-circle pro">6</div><div class="rm-line"></div></div>
-        <div class="rm-right"><h4>Cloud Architecture + Kubernetes</h4><p>Microservices, K8s, Terraform, IaC, full observability stack.</p></div>
-      </div>
-      <div class="rm-step">
-        <div class="rm-left"><div class="rm-week-range">W36–W39</div></div>
-        <div class="rm-center"><div class="rm-circle pro">7</div><div class="rm-line"></div></div>
-        <div class="rm-right"><h4>AI / ML Integration</h4><p>LLMs, RAG, ML deployment, build and ship AI-powered products.</p></div>
-      </div>
-      <div class="rm-step">
-        <div class="rm-left"><div class="rm-week-range">W40–W42</div></div>
-        <div class="rm-center"><div class="rm-circle pro">8</div><div class="rm-line"></div></div>
-        <div class="rm-right"><h4>FAANG Interview Intensive</h4><p>Full mock loops, system design gauntlet, behavioral deep dives, offer negotiation.</p></div>
-      </div>
-      <div class="rm-step">
-        <div class="rm-left"><div class="rm-week-label">EXIT 2</div><div class="rm-week-range">W44</div></div>
-        <div class="rm-center"><div class="rm-circle gold">🏆</div></div>
-        <div class="rm-right"><h4 style="color:var(--gold);">CS Pro Graduate — SDE-1 🚀</h4><p style="color:var(--gold);opacity:0.7;">FAANG-ready. 500+ problems, 10+ projects, system design fluency, AI skills. Crack Google, Meta, Uber.</p></div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <p style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:0.5rem;">CODEX <span style="color:var(--core-start);">Engineering Program</span></p>
-  <p>CS Core → 22 Weeks → Junior Role &nbsp;|&nbsp; CS Pro → 44 Weeks → FAANG SDE-1</p>
-  <p style="margin-top:0.75rem;font-size:0.75rem;">DSA · MERN · Docker · Cloud · AI · System Design · Interview Prep</p>
-</footer>
-
-<script>
-  // Intersection Observer for scroll animations
-  const revealEls = document.querySelectorAll('.reveal, .phase-block');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => {
-          entry.target.classList.add('visible');
-        }, entry.target.classList.contains('phase-block') ? 80 : 0);
-        observer.unobserve(entry.target);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAANG-Ready Curriculum | CS Core & CS Pro</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #060810;
+        --surface: #0d1117;
+        --surface2: #141b26;
+        --border: rgba(255, 255, 255, 0.07);
+        --core-start: #00d4aa;
+        --core-end: #0099ff;
+        --pro-start: #ff6b35;
+        --pro-end: #ff0080;
+        --gold: #ffd700;
+        --text: #e8edf5;
+        --muted: #5a6680;
+        --accent: #00d4aa;
       }
-    });
-  }, { threshold: 0.1 });
 
-  revealEls.forEach(el => observer.observe(el));
-</script>
-</body>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        font-weight: 300;
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+
+      /* ── NOISE OVERLAY ── */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.4;
+      }
+
+      /* ── HERO ── */
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 6rem 2rem 4rem;
+        overflow: hidden;
+      }
+
+      .hero-glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(120px);
+        pointer-events: none;
+      }
+      .hero-glow.g1 {
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(
+          circle,
+          rgba(0, 212, 170, 0.12) 0%,
+          transparent 70%
+        );
+        top: -100px;
+        left: -200px;
+        animation: drift1 12s ease-in-out infinite alternate;
+      }
+      .hero-glow.g2 {
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 0, 128, 0.1) 0%,
+          transparent 70%
+        );
+        bottom: -50px;
+        right: -150px;
+        animation: drift2 14s ease-in-out infinite alternate;
+      }
+      .hero-glow.g3 {
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(
+          circle,
+          rgba(0, 153, 255, 0.08) 0%,
+          transparent 70%
+        );
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      @keyframes drift1 {
+        from {
+          transform: translate(0, 0);
+        }
+        to {
+          transform: translate(60px, 40px);
+        }
+      }
+      @keyframes drift2 {
+        from {
+          transform: translate(0, 0);
+        }
+        to {
+          transform: translate(-40px, -60px);
+        }
+      }
+
+      .eyebrow {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        font-weight: 500;
+        letter-spacing: 0.25em;
+        color: var(--core-start);
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        animation: fadeUp 0.8s 0.2s forwards;
+      }
+
+      .hero h1 {
+        font-family: "Syne", sans-serif;
+        font-size: clamp(3rem, 8vw, 7rem);
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        animation: fadeUp 0.8s 0.4s forwards;
+      }
+
+      .hero h1 .gradient-core {
+        background: linear-gradient(135deg, var(--core-start), var(--core-end));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .hero h1 .gradient-pro {
+        background: linear-gradient(135deg, var(--pro-start), var(--pro-end));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-sub {
+        max-width: 640px;
+        font-size: 1.1rem;
+        color: var(--muted);
+        margin-bottom: 3rem;
+        opacity: 0;
+        animation: fadeUp 0.8s 0.6s forwards;
+      }
+
+      .track-pills {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        opacity: 0;
+        animation: fadeUp 0.8s 0.8s forwards;
+      }
+
+      .pill {
+        padding: 0.6rem 1.4rem;
+        border-radius: 100px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.8rem;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        border: 1px solid;
+        cursor: default;
+      }
+      .pill.core {
+        background: rgba(0, 212, 170, 0.08);
+        border-color: rgba(0, 212, 170, 0.3);
+        color: var(--core-start);
+      }
+      .pill.pro {
+        background: rgba(255, 107, 53, 0.08);
+        border-color: rgba(255, 107, 53, 0.3);
+        color: var(--pro-start);
+      }
+      .pill.faang {
+        background: rgba(255, 215, 0, 0.08);
+        border-color: rgba(255, 215, 0, 0.3);
+        color: var(--gold);
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ── SECTION WRAPPER ── */
+      .section {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 5rem 2rem;
+      }
+
+      .section-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 0.5rem;
+      }
+
+      .section-title {
+        font-family: "Syne", sans-serif;
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+        font-weight: 700;
+        line-height: 1.1;
+        margin-bottom: 1rem;
+      }
+
+      .section-desc {
+        color: var(--muted);
+        max-width: 560px;
+        font-size: 0.95rem;
+        margin-bottom: 3rem;
+      }
+
+      /* ── TRACK OVERVIEW CARDS ── */
+      .tracks-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      @media (max-width: 768px) {
+        .tracks-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .track-card {
+        position: relative;
+        border-radius: 20px;
+        padding: 2.5rem;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+      .track-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+      }
+
+      .track-card.core::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(0, 212, 170, 0.06) 0%,
+          transparent 60%
+        );
+        pointer-events: none;
+      }
+      .track-card.pro::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 107, 53, 0.07) 0%,
+          transparent 60%
+        );
+        pointer-events: none;
+      }
+
+      .track-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 1rem;
+        border-radius: 100px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+      }
+      .track-badge.core {
+        background: rgba(0, 212, 170, 0.15);
+        color: var(--core-start);
+      }
+      .track-badge.pro {
+        background: rgba(255, 107, 53, 0.15);
+        color: var(--pro-start);
+      }
+
+      .track-card h3 {
+        font-family: "Syne", sans-serif;
+        font-size: 1.7rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+      }
+      .track-card .duration {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 1rem;
+      }
+      .track-card.core .duration {
+        color: var(--core-start);
+      }
+      .track-card.pro .duration {
+        color: var(--pro-start);
+      }
+
+      .track-card p {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .outcome-tag {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 6px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        font-weight: 500;
+        background: rgba(255, 215, 0, 0.1);
+        color: var(--gold);
+        border: 1px solid rgba(255, 215, 0, 0.2);
+      }
+
+      /* ── PHASE TIMELINE ── */
+      .timeline {
+        position: relative;
+        padding-left: 2rem;
+      }
+      .timeline::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(
+          to bottom,
+          var(--core-start),
+          var(--core-end),
+          var(--pro-start),
+          var(--pro-end)
+        );
+        border-radius: 2px;
+      }
+
+      .phase-block {
+        position: relative;
+        margin-bottom: 2.5rem;
+        opacity: 0;
+        transform: translateX(-12px);
+        transition:
+          opacity 0.5s ease,
+          transform 0.5s ease;
+      }
+      .phase-block.visible {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .phase-dot {
+        position: absolute;
+        left: -2.35rem;
+        top: 0.4rem;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid var(--bg);
+      }
+      .phase-dot.core {
+        background: var(--core-start);
+        box-shadow: 0 0 12px rgba(0, 212, 170, 0.6);
+      }
+      .phase-dot.pro {
+        background: var(--pro-start);
+        box-shadow: 0 0 12px rgba(255, 107, 53, 0.6);
+      }
+
+      .phase-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .phase-num {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+
+      .phase-title {
+        font-family: "Syne", sans-serif;
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+
+      .phase-weeks {
+        margin-left: auto;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 100px;
+        background: var(--surface2);
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      .phase-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+
+      .topic-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        font-size: 0.875rem;
+      }
+      .topic-item .icon {
+        font-size: 1rem;
+        flex-shrink: 0;
+        margin-top: 0.05rem;
+      }
+      .topic-item .label {
+        color: var(--text);
+        font-weight: 400;
+      }
+      .topic-item .sublabel {
+        color: var(--muted);
+        font-size: 0.78rem;
+        display: block;
+        margin-top: 0.1rem;
+      }
+
+      /* ── DIVIDER ── */
+      .track-divider {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin: 3rem 0;
+      }
+      .track-divider::before,
+      .track-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+      .track-divider-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: 100px;
+        background: var(--surface);
+      }
+
+      /* ── COMPANY LOGOS MARQUEE ── */
+      .marquee-section {
+        position: relative;
+        padding: 3rem 0;
+        overflow: hidden;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .marquee-label {
+        text-align: center;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.68rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 1.5rem;
+      }
+      .marquee-track {
+        display: flex;
+        gap: 3rem;
+        animation: marquee 25s linear infinite;
+        width: max-content;
+      }
+      @keyframes marquee {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+      .company-chip {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.6rem 1.5rem;
+        border-radius: 100px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        font-family: "Syne", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        white-space: nowrap;
+        color: var(--text);
+      }
+      .company-chip .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--gold);
+      }
+
+      /* ── SKILLS GRID ── */
+      .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1rem;
+      }
+
+      .skill-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition:
+          border-color 0.3s,
+          transform 0.3s;
+      }
+      .skill-card:hover {
+        border-color: rgba(255, 255, 255, 0.15);
+        transform: translateY(-2px);
+      }
+
+      .skill-icon {
+        font-size: 1.8rem;
+        margin-bottom: 0.75rem;
+      }
+      .skill-card h4 {
+        font-family: "Syne", sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 0.4rem;
+      }
+      .skill-card p {
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+      .skill-level {
+        display: flex;
+        gap: 0.3rem;
+        margin-top: 0.75rem;
+      }
+      .level-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--border);
+      }
+      .level-dot.active.core {
+        background: var(--core-start);
+      }
+      .level-dot.active.pro {
+        background: var(--pro-start);
+      }
+
+      /* ── WEEKLY BREAKDOWN TABLE ── */
+      .week-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+      }
+      .week-table th {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.68rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+      .week-table td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        vertical-align: top;
+      }
+      .week-table tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .week-num {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .week-phase-tag {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 6px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.65rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .week-phase-tag.core {
+        background: rgba(0, 212, 170, 0.12);
+        color: var(--core-start);
+      }
+      .week-phase-tag.pro {
+        background: rgba(255, 107, 53, 0.12);
+        color: var(--pro-start);
+      }
+
+      .week-topic {
+        font-weight: 400;
+        color: var(--text);
+      }
+      .week-deliverable {
+        color: var(--muted);
+        font-size: 0.78rem;
+        margin-top: 0.2rem;
+      }
+
+      /* ── ROADMAP PATH ── */
+      .roadmap {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        position: relative;
+      }
+
+      .rm-step {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+      }
+
+      .rm-left {
+        width: 140px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        padding-right: 1.5rem;
+        padding-top: 0.25rem;
+      }
+
+      .rm-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 24px;
+        flex-shrink: 0;
+      }
+      .rm-circle {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.65rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        border: 2px solid;
+        z-index: 1;
+      }
+      .rm-circle.core {
+        background: rgba(0, 212, 170, 0.15);
+        border-color: var(--core-start);
+        color: var(--core-start);
+      }
+      .rm-circle.pro {
+        background: rgba(255, 107, 53, 0.15);
+        border-color: var(--pro-start);
+        color: var(--pro-start);
+      }
+      .rm-circle.gold {
+        background: rgba(255, 215, 0, 0.15);
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+      .rm-line {
+        flex: 1;
+        width: 2px;
+        background: var(--border);
+        margin: 4px 0;
+      }
+
+      .rm-right {
+        flex: 1;
+        padding: 0 0 2rem 1.5rem;
+      }
+      .rm-right h4 {
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+      }
+      .rm-right p {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .rm-week-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.68rem;
+        color: var(--muted);
+        text-align: right;
+      }
+      .rm-week-range {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-align: right;
+        color: var(--text);
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 3rem 2rem;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+      footer strong {
+        color: var(--text);
+      }
+
+      /* ── SCROLL ANIMATIONS ── */
+      .reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ── STICKY NAV ── */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 2rem;
+        background: rgba(6, 8, 16, 0.85);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-logo {
+        font-family: "Syne", sans-serif;
+        font-size: 1rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .nav-logo span {
+        color: var(--core-start);
+      }
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
+      }
+      .nav-links a {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--text);
+      }
+      @media (max-width: 600px) {
+        .nav-links {
+          display: none;
+        }
+      }
+
+      /* ── STAT STRIP ── */
+      .stat-strip {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 0;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 4rem;
+      }
+      .stat-item {
+        padding: 1.5rem;
+        border-right: 1px solid var(--border);
+        text-align: center;
+      }
+      .stat-item:last-child {
+        border-right: none;
+      }
+      .stat-value {
+        font-family: "Syne", sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 0.3rem;
+      }
+      .stat-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .grad-core {
+        background: linear-gradient(135deg, var(--core-start), var(--core-end));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .grad-pro {
+        background: linear-gradient(135deg, var(--pro-start), var(--pro-end));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .grad-gold {
+        color: var(--gold);
+      }
+
+      body.light-mode {
+        --bg: #ffffff;
+        --surface: #f5f7fb;
+        --surface2: #e9eef5;
+        --border: rgba(0, 0, 0, 0.08);
+        --text: #0d1117;
+        --muted: #5a6680;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav>
+      <div class="nav-logo">CODE<span>X</span></div>
+      <ul class="nav-links">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#curriculum">Curriculum</a></li>
+        <li><a href="#weekly">Weekly Plan</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
+      </ul>
+      <button
+        id="themeToggle"
+        style="
+          padding: 6px 12px;
+          border-radius: 8px;
+          border: 1px solid var(--border);
+          background: var(--surface);
+          color: var(--text);
+          cursor: pointer;
+        "
+      >
+        🌙
+      </button>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-glow g1"></div>
+      <div class="hero-glow g2"></div>
+      <div class="hero-glow g3"></div>
+      <p class="eyebrow">// FAANG-Ready Engineering Curriculum</p>
+      <h1>
+        <span class="gradient-core">CS Core</span><br />
+        <span
+          style="
+            color: var(--muted);
+            font-size: 0.5em;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+          "
+          >CONTINUES INTO</span
+        ><br />
+        <span class="gradient-pro">CS Pro</span>
+      </h1>
+      <p class="hero-sub">
+        A dual-track, 44-week program engineered to take you from zero to
+        landing SDE-1 roles at Google, Meta, Uber, and top-tier tech companies.
+      </p>
+      <div class="track-pills">
+        <div class="pill core">22 Weeks → Junior / Associate</div>
+        <div class="pill pro">44 Weeks → FAANG SDE-1</div>
+        <div class="pill faang">DSA · MERN · Cloud · AI · Docker</div>
+      </div>
+    </section>
+
+    <!-- OVERVIEW -->
+    <div id="overview" style="position: relative; z-index: 1">
+      <div class="section">
+        <p class="section-label">// Track Overview</p>
+        <h2 class="section-title">Two Tracks.<br />One Continuous Journey.</h2>
+        <p class="section-desc">
+          Start with CS Core. Exit early with confidence, or push through CS Pro
+          and compete for the biggest roles in the industry.
+        </p>
+
+        <div class="tracks-grid reveal">
+          <div class="track-card core">
+            <div class="track-badge core">📘 CS Core</div>
+            <h3>Foundation &amp; Fundamentals</h3>
+            <div class="duration">
+              22 <span style="font-size: 1rem; color: var(--muted)">weeks</span>
+            </div>
+            <p>
+              Master the fundamentals of DSA, full-stack development with MERN,
+              and modern deployment practices. Graduate ready for
+              junior/associate roles at startups and mid-scale companies.
+            </p>
+            <div class="outcome-tag">🎯 Junior / Associate SWE</div>
+          </div>
+          <div class="track-card pro">
+            <div class="track-badge pro">🔥 CS Pro</div>
+            <h3>Advanced &amp; Interview-Ready</h3>
+            <div class="duration">
+              44 <span style="font-size: 1rem; color: var(--muted)">weeks</span>
+            </div>
+            <p>
+              Built directly on top of CS Core. Dive deep into advanced DSA,
+              system design, AI/ML integration, cloud architecture and
+              everything it takes to crack FAANG-level interviews.
+            </p>
+            <div class="outcome-tag">🏆 SDE-1 at FAANG / Unicorns</div>
+          </div>
+        </div>
+
+        <div class="stat-strip reveal">
+          <div class="stat-item">
+            <div class="stat-value grad-core">22</div>
+            <div class="stat-label">Core Weeks</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value grad-pro">22</div>
+            <div class="stat-label">Pro Weeks</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value grad-gold">6</div>
+            <div class="stat-label">Tech Pillars</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" style="color: var(--text)">500+</div>
+            <div class="stat-label">DSA Problems</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" style="color: var(--text)">10+</div>
+            <div class="stat-label">Real Projects</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value grad-gold">∞</div>
+            <div class="stat-label">Mock Interviews</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPANIES MARQUEE -->
+    <div class="marquee-section">
+      <div class="marquee-label">// Target Companies After Completion</div>
+      <div class="marquee-track" id="marqueeTrack">
+        <div class="company-chip"><span class="dot"></span>Google</div>
+        <div class="company-chip"><span class="dot"></span>Meta</div>
+        <div class="company-chip"><span class="dot"></span>Amazon</div>
+        <div class="company-chip"><span class="dot"></span>Microsoft</div>
+        <div class="company-chip"><span class="dot"></span>Uber</div>
+        <div class="company-chip"><span class="dot"></span>Apple</div>
+        <div class="company-chip"><span class="dot"></span>Netflix</div>
+        <div class="company-chip"><span class="dot"></span>Stripe</div>
+        <div class="company-chip"><span class="dot"></span>Airbnb</div>
+        <div class="company-chip"><span class="dot"></span>LinkedIn</div>
+        <div class="company-chip"><span class="dot"></span>Twitter / X</div>
+        <div class="company-chip"><span class="dot"></span>Figma</div>
+        <div class="company-chip"><span class="dot"></span>Notion</div>
+        <div class="company-chip"><span class="dot"></span>Atlassian</div>
+        <!-- duplicate for seamless loop -->
+        <div class="company-chip"><span class="dot"></span>Google</div>
+        <div class="company-chip"><span class="dot"></span>Meta</div>
+        <div class="company-chip"><span class="dot"></span>Amazon</div>
+        <div class="company-chip"><span class="dot"></span>Microsoft</div>
+        <div class="company-chip"><span class="dot"></span>Uber</div>
+        <div class="company-chip"><span class="dot"></span>Apple</div>
+        <div class="company-chip"><span class="dot"></span>Netflix</div>
+        <div class="company-chip"><span class="dot"></span>Stripe</div>
+        <div class="company-chip"><span class="dot"></span>Airbnb</div>
+        <div class="company-chip"><span class="dot"></span>LinkedIn</div>
+        <div class="company-chip"><span class="dot"></span>Twitter / X</div>
+        <div class="company-chip"><span class="dot"></span>Figma</div>
+        <div class="company-chip"><span class="dot"></span>Notion</div>
+        <div class="company-chip"><span class="dot"></span>Atlassian</div>
+      </div>
+    </div>
+
+    <!-- CURRICULUM PHASES -->
+    <div id="curriculum" style="position: relative; z-index: 1">
+      <div class="section">
+        <p class="section-label">// Curriculum Breakdown</p>
+        <h2 class="section-title">Phase by Phase.<br />Week by Week.</h2>
+        <p class="section-desc">
+          Every phase is intentionally sequenced. Skills compound. Nothing is
+          taught in isolation.
+        </p>
+
+        <!-- CS CORE HEADER -->
+        <div class="track-divider">
+          <div
+            class="track-divider-label"
+            style="
+              color: var(--core-start);
+              border-color: rgba(0, 212, 170, 0.3);
+              background: rgba(0, 212, 170, 0.06);
+            "
+          >
+            📘 CS CORE — Weeks 1–22
+          </div>
+        </div>
+
+        <div class="timeline" id="coreTimeline">
+          <!-- Phase 1 -->
+          <div class="phase-block">
+            <div class="phase-dot core"></div>
+            <div class="phase-header">
+              <span class="phase-num">Phase 01</span>
+              <span class="phase-title"
+                >Programming Foundations &amp; CS Basics</span
+              >
+              <span class="phase-weeks">Weeks 1–3</span>
+            </div>
+            <div class="phase-card">
+              <div class="topic-item">
+                <span class="icon">⚡</span>
+                <div>
+                  <span class="label">JavaScript Fundamentals</span
+                  ><span class="sublabel"
+                    >Variables, loops, functions, closures, async/await</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🧠</span>
+                <div>
+                  <span class="label">How Computers Work</span
+                  ><span class="sublabel"
+                    >Memory, CPU, OS basics, processes</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">📟</span>
+                <div>
+                  <span class="label">Command Line Mastery</span
+                  ><span class="sublabel"
+                    >Bash, scripting, file systems, permissions</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🔀</span>
+                <div>
+                  <span class="label">Git &amp; Version Control</span
+                  ><span class="sublabel"
+                    >Branching, PRs, merge strategies, GitHub flow</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🎯</span>
+                <div>
+                  <span class="label">Problem-Solving Framework</span
+                  ><span class="sublabel"
+                    >Decomposition, pseudocode, debugging</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">📐</span>
+                <div>
+                  <span class="label">Big-O Notation Intro</span
+                  ><span class="sublabel"
+                    >Time &amp; space complexity concepts</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 2 -->
+          <div class="phase-block">
+            <div class="phase-dot core"></div>
+            <div class="phase-header">
+              <span class="phase-num">Phase 02</span>
+              <span class="phase-title"
+                >DSA — Arrays, Strings &amp; Linear Structures</span
+              >
+              <span class="phase-weeks">Weeks 4–7</span>
+            </div>
+            <div class="phase-card">
+              <div class="topic-item">
+                <span class="icon">📊</span>
+                <div>
+                  <span class="label">Arrays &amp; Strings</span
+                  ><span class="sublabel"
+                    >Two pointers, sliding window, prefix sums</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🔗</span>
+                <div>
+                  <span class="label">Linked Lists</span
+                  ><span class="sublabel"
+                    >Singly, doubly, fast/slow pointers</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">📚</span>
+                <div>
+                  <span class="label">Stacks &amp; Queues</span
+                  ><span class="sublabel"
+                    >Monotonic stacks, deques, LRU cache</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🗂️</span>
+                <div>
+                  <span class="label">Hash Maps &amp; Sets</span
+                  ><span class="sublabel"
+                    >Collision handling, frequency maps, grouping</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">💡</span>
+                <div>
+                  <span class="label">Sorting Algorithms</span
+                  ><span class="sublabel"
+                    >Merge, quick, counting sort — comparisons</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🎯</span>
+                <div>
+                  <span class="label">LeetCode Easy → Medium</span
+                  ><span class="sublabel"
+                    >100+ problems, timed practice sessions</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 3 -->
+          <div class="phase-block">
+            <div class="phase-dot core"></div>
+            <div class="phase-header">
+              <span class="phase-num">Phase 03</span>
+              <span class="phase-title">Frontend — React &amp; Modern UI</span>
+              <span class="phase-weeks">Weeks 8–11</span>
+            </div>
+            <div class="phase-card">
+              <div class="topic-item">
+                <span class="icon">🌐</span>
+                <div>
+                  <span class="label">HTML5 / CSS3 Deep Dive</span
+                  ><span class="sublabel"
+                    >Flexbox, Grid, animations, responsive design</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">⚛️</span>
+                <div>
+                  <span class="label">React Fundamentals</span
+                  ><span class="sublabel"
+                    >JSX, hooks, state, props, lifting state</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🧩</span>
+                <div>
+                  <span class="label">React Advanced Patterns</span
+                  ><span class="sublabel"
+                    >Context, custom hooks, React Router</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🗃️</span>
+                <div>
+                  <span class="label">State Management</span
+                  ><span class="sublabel"
+                    >Redux Toolkit, Zustand, React Query</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🎨</span>
+                <div>
+                  <span class="label">Tailwind CSS &amp; Design Systems</span
+                  ><span class="sublabel"
+                    >Utility-first CSS, component libraries</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🚀</span>
+                <div>
+                  <span class="label">Project: Full UI App</span
+                  ><span class="sublabel"
+                    >Build a multi-page CRUD app with auth UI</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 4 -->
+          <div class="phase-block">
+            <div class="phase-dot core"></div>
+            <div class="phase-header">
+              <span class="phase-num">Phase 04</span>
+              <span class="phase-title"
+                >Backend — Node.js, Express &amp; Databases</span
+              >
+              <span class="phase-weeks">Weeks 12–16</span>
+            </div>
+            <div class="phase-card">
+              <div class="topic-item">
+                <span class="icon">🟢</span>
+                <div>
+                  <span class="label">Node.js Internals</span
+                  ><span class="sublabel"
+                    >Event loop, streams, modules, fs/http</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🛤️</span>
+                <div>
+                  <span class="label">Express.js &amp; REST APIs</span
+                  ><span class="sublabel"
+                    >Routing, middleware, error handling, auth</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🍃</span>
+                <div>
+                  <span class="label">MongoDB &amp; Mongoose</span
+                  ><span class="sublabel"
+                    >Schema design, aggregation, indexing</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🐘</span>
+                <div>
+                  <span class="label">PostgreSQL &amp; SQL</span
+                  ><span class="sublabel"
+                    >Joins, transactions, ACID, query optimization</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🔐</span>
+                <div>
+                  <span class="label">Auth &amp; Security</span
+                  ><span class="sublabel"
+                    >JWT, OAuth2, bcrypt, CORS, rate limiting</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🚀</span>
+                <div>
+                  <span class="label">Project: Full REST API</span
+                  ><span class="sublabel"
+                    >Auth + CRUD + DB — production-ready backend</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 5 -->
+          <div class="phase-block">
+            <div class="phase-dot core"></div>
+            <div class="phase-header">
+              <span class="phase-num">Phase 05</span>
+              <span class="phase-title"
+                >DevOps Basics — Docker &amp; Cloud Intro</span
+              >
+              <span class="phase-weeks">Weeks 17–19</span>
+            </div>
+            <div class="phase-card">
+              <div class="topic-item">
+                <span class="icon">🐳</span>
+                <div>
+                  <span class="label">Docker Fundamentals</span
+                  ><span class="sublabel"
+                    >Images, containers, Dockerfile, volumes</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🔧</span>
+                <div>
+                  <span class="label">Docker Compose</span
+                  ><span class="sublabel"
+                    >Multi-service apps, networking, env vars</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">☁️</span>
+                <div>
+                  <span class="label">Cloud Intro — AWS / GCP</span
+                  ><span class="sublabel"
+                    >EC2, S3, Lambda basics, IAM roles</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🔄</span>
+                <div>
+                  <span class="label">CI/CD Pipelines</span
+                  ><span class="sublabel"
+                    >GitHub Actions, automated testing &amp; deploy</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">📊</span>
+                <div>
+                  <span class="label">Monitoring Basics</span
+                  ><span class="sublabel"
+                    >Logs, uptime, basic metrics with CloudWatch</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🚀</span>
+                <div>
+                  <span class="label">Project: Containerize &amp; Deploy</span
+                  ><span class="sublabel"
+                    >Dockerize MERN app, deploy on AWS</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 6 -->
+          <div class="phase-block">
+            <div class="phase-dot core"></div>
+            <div class="phase-header">
+              <span class="phase-num">Phase 06</span>
+              <span class="phase-title"
+                >CS Core Capstone &amp; Interview Prep</span
+              >
+              <span class="phase-weeks">Weeks 20–22</span>
+            </div>
+            <div class="phase-card">
+              <div class="topic-item">
+                <span class="icon">🏗️</span>
+                <div>
+                  <span class="label">Capstone Full-Stack Project</span
+                  ><span class="sublabel"
+                    >End-to-end MERN app, deployed to cloud</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🎤</span>
+                <div>
+                  <span class="label">Mock Technical Interviews</span
+                  ><span class="sublabel">DSA rounds, code-aloud sessions</span>
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">📝</span>
+                <div>
+                  <span class="label">Resume &amp; Portfolio</span
+                  ><span class="sublabel"
+                    >GitHub profile, project write-ups, LinkedIn</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🔍</span>
+                <div>
+                  <span class="label">Job Application Strategy</span
+                  ><span class="sublabel"
+                    >Cold outreach, referrals, application funnels</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">💬</span>
+                <div>
+                  <span class="label">Behavioral Interviews</span
+                  ><span class="sublabel"
+                    >STAR method, situational prep, culture fit</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🏆</span>
+                <div>
+                  <span class="label">Exit: Junior / Associate Role</span
+                  ><span class="sublabel"
+                    >Ready for real-world engineering positions</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end core timeline -->
+
+        <!-- CS PRO HEADER -->
+        <div class="track-divider" style="margin-top: 4rem">
+          <div
+            class="track-divider-label"
+            style="
+              color: var(--pro-start);
+              border-color: rgba(255, 107, 53, 0.3);
+              background: rgba(255, 107, 53, 0.06);
+            "
+          >
+            🔥 CS PRO — Weeks 23–44 (Continuation)
+          </div>
+        </div>
+
+        <div
+          class="timeline"
+          id="proTimeline"
+          style="--timeline-color: var(--pro-start)"
+        >
+          <!-- Phase 7 -->
+          <div class="phase-block">
+            <div class="phase-dot pro"></div>
+            <div class="phase-header">
+              <span class="phase-num">Phase 07</span>
+              <span class="phase-title"
+                >Advanced DSA — Trees, Graphs &amp; DP</span
+              >
+              <span class="phase-weeks">Weeks 23–27</span>
+            </div>
+            <div class="phase-card">
+              <div class="topic-item">
+                <span class="icon">🌲</span>
+                <div>
+                  <span class="label">Binary Trees &amp; BST</span
+                  ><span class="sublabel"
+                    >Traversals, construction, validation, LCA</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🕸️</span>
+                <div>
+                  <span class="label">Graphs (BFS/DFS)</span
+                  ><span class="sublabel"
+                    >Adjacency list/matrix, cycle detection, topo sort</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🔑</span>
+                <div>
+                  <span class="label">Advanced Graph Algorithms</span
+                  ><span class="sublabel"
+                    >Dijkstra, Bellman-Ford, Prim's, Kruskal's</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🧮</span>
+                <div>
+                  <span class="label">Dynamic Programming</span
+                  ><span class="sublabel"
+                    >Memoization, tabulation, LCS, knapsack, DP on graphs</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🔢</span>
+                <div>
+                  <span class="label">Heaps &amp; Priority Queues</span
+                  ><span class="sublabel"
+                    >Min/max heap, k-th element, Dijkstra internals</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🎯</span>
+                <div>
+                  <span class="label">LeetCode Hard Grind</span
+                  ><span class="sublabel"
+                    >200+ medium/hard, timed, FAANG problem sets</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 8 -->
+          <div class="phase-block">
+            <div class="phase-dot pro"></div>
+            <div class="phase-header">
+              <span class="phase-num">Phase 08</span>
+              <span class="phase-title"
+                >System Design — Fundamentals to Advanced</span
+              >
+              <span class="phase-weeks">Weeks 28–31</span>
+            </div>
+            <div class="phase-card">
+              <div class="topic-item">
+                <span class="icon">🏛️</span>
+                <div>
+                  <span class="label">System Design Principles</span
+                  ><span class="sublabel"
+                    >Scalability, availability, reliability tradeoffs</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">⚖️</span>
+                <div>
+                  <span class="label">Load Balancing &amp; CDN</span
+                  ><span class="sublabel"
+                    >Round robin, consistent hashing, edge caching</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🗄️</span>
+                <div>
+                  <span class="label">Database Scaling</span
+                  ><span class="sublabel"
+                    >Sharding, replication, CAP theorem, eventual
+                    consistency</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">📨</span>
+                <div>
+                  <span class="label">Message Queues &amp; Kafka</span
+                  ><span class="sublabel"
+                    >Async processing, pub/sub, event-driven architecture</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🔴</span>
+                <div>
+                  <span class="label">Caching — Redis</span
+                  ><span class="sublabel"
+                    >Eviction policies, cache invalidation, write-through</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">📐</span>
+                <div>
+                  <span class="label">Design: URL Shortener, Twitter, Uber</span
+                  ><span class="sublabel"
+                    >End-to-end FAANG-style design sessions</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 9 -->
+          <div class="phase-block">
+            <div class="phase-dot pro"></div>
+            <div class="phase-header">
+              <span class="phase-num">Phase 09</span>
+              <span class="phase-title"
+                >Cloud Architecture — AWS / GCP Advanced</span
+              >
+              <span class="phase-weeks">Weeks 32–35</span>
+            </div>
+            <div class="phase-card">
+              <div class="topic-item">
+                <span class="icon">☁️</span>
+                <div>
+                  <span class="label">Cloud Architecture Patterns</span
+                  ><span class="sublabel"
+                    >Microservices, serverless, event-driven</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">⚙️</span>
+                <div>
+                  <span class="label">Kubernetes (K8s)</span
+                  ><span class="sublabel"
+                    >Pods, deployments, services, HPA, ingress</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🏗️</span>
+                <div>
+                  <span class="label">Infrastructure as Code</span
+                  ><span class="sublabel">Terraform, CloudFormation, CDK</span>
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🔒</span>
+                <div>
+                  <span class="label">Cloud Security</span
+                  ><span class="sublabel"
+                    >IAM deep dive, VPC, secrets management, Zero Trust</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">📈</span>
+                <div>
+                  <span class="label">Observability Stack</span
+                  ><span class="sublabel"
+                    >Prometheus, Grafana, ELK, distributed tracing</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🚀</span>
+                <div>
+                  <span class="label">Project: Cloud-Native App</span
+                  ><span class="sublabel"
+                    >Microservices on K8s, IaC, full observability</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 10 -->
+          <div class="phase-block">
+            <div class="phase-dot pro"></div>
+            <div class="phase-header">
+              <span class="phase-num">Phase 10</span>
+              <span class="phase-title">AI / ML Engineering Integration</span>
+              <span class="phase-weeks">Weeks 36–39</span>
+            </div>
+            <div class="phase-card">
+              <div class="topic-item">
+                <span class="icon">🤖</span>
+                <div>
+                  <span class="label">ML Fundamentals for SWE</span
+                  ><span class="sublabel"
+                    >Supervised/unsupervised, model evaluation,
+                    bias-variance</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🐍</span>
+                <div>
+                  <span class="label">Python for AI/ML</span
+                  ><span class="sublabel"
+                    >NumPy, Pandas, scikit-learn, data pipelines</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🧠</span>
+                <div>
+                  <span class="label">LLM &amp; GenAI Integration</span
+                  ><span class="sublabel"
+                    >OpenAI API, LangChain, RAG, prompt engineering</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🔌</span>
+                <div>
+                  <span class="label">AI-Powered APIs</span
+                  ><span class="sublabel"
+                    >Build and deploy AI-backed REST services</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">📦</span>
+                <div>
+                  <span class="label">ML Model Deployment</span
+                  ><span class="sublabel"
+                    >FastAPI, model versioning, A/B testing, MLOps basics</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🚀</span>
+                <div>
+                  <span class="label">Project: AI SaaS Feature</span
+                  ><span class="sublabel"
+                    >Integrate LLM into MERN app, deploy on cloud</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 11 -->
+          <div class="phase-block">
+            <div class="phase-dot pro"></div>
+            <div class="phase-header">
+              <span class="phase-num">Phase 11</span>
+              <span class="phase-title">FAANG Interview Intensive</span>
+              <span class="phase-weeks">Weeks 40–42</span>
+            </div>
+            <div class="phase-card">
+              <div class="topic-item">
+                <span class="icon">🎯</span>
+                <div>
+                  <span class="label">Pattern Mastery</span
+                  ><span class="sublabel"
+                    >14 core patterns: BFS, DP, Trie, Union-Find…</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">⏱️</span>
+                <div>
+                  <span class="label">Timed Mock Interviews</span
+                  ><span class="sublabel"
+                    >Daily coding rounds, Google/Meta style</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🏗️</span>
+                <div>
+                  <span class="label">System Design Mocks</span
+                  ><span class="sublabel"
+                    >Design Netflix, Slack, Google Docs — full rounds</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🧑‍💼</span>
+                <div>
+                  <span class="label">Behavioral Deep Dive</span
+                  ><span class="sublabel"
+                    >Leadership principles, conflict, ownership stories</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">💰</span>
+                <div>
+                  <span class="label">Negotiation &amp; Offers</span
+                  ><span class="sublabel"
+                    >Competing offers, TC breakdown, negotiation scripts</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">📋</span>
+                <div>
+                  <span class="label">Company-Specific Prep</span
+                  ><span class="sublabel"
+                    >Google, Meta, Amazon culture &amp; process drills</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 12 -->
+          <div class="phase-block">
+            <div class="phase-dot pro"></div>
+            <div class="phase-header">
+              <span class="phase-num">Phase 12</span>
+              <span class="phase-title">CS Pro Capstone &amp; Launch</span>
+              <span class="phase-weeks">Weeks 43–44</span>
+            </div>
+            <div class="phase-card">
+              <div class="topic-item">
+                <span class="icon">🏆</span>
+                <div>
+                  <span class="label">Capstone Project</span
+                  ><span class="sublabel"
+                    >Full-stack AI-powered app, cloud-deployed,
+                    containerized</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">📁</span>
+                <div>
+                  <span class="label">Portfolio Finalization</span
+                  ><span class="sublabel"
+                    >5 production projects, case studies, GitHub readme</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🔗</span>
+                <div>
+                  <span class="label">Network &amp; Apply</span
+                  ><span class="sublabel"
+                    >Referral campaigns, LinkedIn optimized, applications
+                    live</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🎓</span>
+                <div>
+                  <span class="label">Graduation &amp; Certification</span
+                  ><span class="sublabel"
+                    >CS Pro certificate, cohort alumni network</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🎤</span>
+                <div>
+                  <span class="label">Final Mock Gauntlet</span
+                  ><span class="sublabel"
+                    >Full FAANG loop: 4 technical + 1 system + 2
+                    behavioral</span
+                  >
+                </div>
+              </div>
+              <div class="topic-item">
+                <span class="icon">🚀</span>
+                <div>
+                  <span class="label">Exit: SDE-1 at FAANG</span
+                  ><span class="sublabel"
+                    >Ready to compete for top-tier engineering roles</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end pro timeline -->
+      </div>
+    </div>
+
+    <!-- WEEKLY SCHEDULE SAMPLE -->
+    <div
+      id="weekly"
+      style="
+        position: relative;
+        z-index: 1;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+      "
+    >
+      <div class="section">
+        <p class="section-label">// Sample Weekly Breakdown</p>
+        <h2 class="section-title">What Each Week<br />Looks Like.</h2>
+        <p class="section-desc">
+          Every week follows a structured rhythm: learn → build → practice →
+          review.
+        </p>
+        <div
+          class="reveal"
+          style="
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+          "
+        >
+          <table class="week-table">
+            <thead>
+              <tr>
+                <th>Week</th>
+                <th>Track</th>
+                <th>Primary Topic</th>
+                <th>DSA Focus</th>
+                <th>Deliverable</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="week-num">W01</td>
+                <td><span class="week-phase-tag core">Core</span></td>
+                <td class="week-topic">JS Fundamentals</td>
+                <td style="color: var(--muted); font-size: 0.8rem">
+                  Variables, functions, closures
+                </td>
+                <td>
+                  <div class="week-deliverable">
+                    10 JS exercises + CLI quiz app
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="week-num">W02</td>
+                <td><span class="week-phase-tag core">Core</span></td>
+                <td class="week-topic">Git + CS Basics</td>
+                <td style="color: var(--muted); font-size: 0.8rem">
+                  Big-O intro, complexity analysis
+                </td>
+                <td>
+                  <div class="week-deliverable">
+                    Collaborative repo + complexity cheat sheet
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="week-num">W03</td>
+                <td><span class="week-phase-tag core">Core</span></td>
+                <td class="week-topic">Arrays &amp; Strings</td>
+                <td style="color: var(--muted); font-size: 0.8rem">
+                  Two pointers, sliding window
+                </td>
+                <td>
+                  <div class="week-deliverable">20 LeetCode Easy problems</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="week-num">W04</td>
+                <td><span class="week-phase-tag core">Core</span></td>
+                <td class="week-topic">Linked Lists</td>
+                <td style="color: var(--muted); font-size: 0.8rem">
+                  Fast/slow pointers, reversal
+                </td>
+                <td>
+                  <div class="week-deliverable">
+                    Implement LinkedList + 15 problems
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="week-num">W05</td>
+                <td><span class="week-phase-tag core">Core</span></td>
+                <td class="week-topic">Stacks &amp; Queues</td>
+                <td style="color: var(--muted); font-size: 0.8rem">
+                  Monotonic stack, sliding window max
+                </td>
+                <td>
+                  <div class="week-deliverable">
+                    Mini LRU Cache implementation
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="week-num">W08</td>
+                <td><span class="week-phase-tag core">Core</span></td>
+                <td class="week-topic">React Basics</td>
+                <td style="color: var(--muted); font-size: 0.8rem">—</td>
+                <td>
+                  <div class="week-deliverable">
+                    Todo App with hooks + routing
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="week-num">W12</td>
+                <td><span class="week-phase-tag core">Core</span></td>
+                <td class="week-topic">Node + Express</td>
+                <td style="color: var(--muted); font-size: 0.8rem">—</td>
+                <td>
+                  <div class="week-deliverable">
+                    REST API with auth middleware
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="week-num">W17</td>
+                <td><span class="week-phase-tag core">Core</span></td>
+                <td class="week-topic">Docker Basics</td>
+                <td style="color: var(--muted); font-size: 0.8rem">—</td>
+                <td>
+                  <div class="week-deliverable">
+                    Dockerize MERN app, compose file
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="week-num">W22</td>
+                <td><span class="week-phase-tag core">Core</span></td>
+                <td class="week-topic">Core Capstone</td>
+                <td style="color: var(--muted); font-size: 0.8rem">
+                  Final DSA review + mock
+                </td>
+                <td>
+                  <div class="week-deliverable">
+                    Full-stack deployed app + resume
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="week-num">W23</td>
+                <td><span class="week-phase-tag pro">Pro</span></td>
+                <td class="week-topic">Binary Trees</td>
+                <td style="color: var(--muted); font-size: 0.8rem">
+                  DFS, BFS, LCA, construction
+                </td>
+                <td>
+                  <div class="week-deliverable">
+                    25 Tree problems (med/hard)
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="week-num">W26</td>
+                <td><span class="week-phase-tag pro">Pro</span></td>
+                <td class="week-topic">Dynamic Programming</td>
+                <td style="color: var(--muted); font-size: 0.8rem">
+                  Memoization, DP on intervals
+                </td>
+                <td>
+                  <div class="week-deliverable">
+                    DP pattern sheet + 30 problems
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="week-num">W28</td>
+                <td><span class="week-phase-tag pro">Pro</span></td>
+                <td class="week-topic">System Design I</td>
+                <td style="color: var(--muted); font-size: 0.8rem">—</td>
+                <td>
+                  <div class="week-deliverable">
+                    Design URL Shortener (full doc)
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="week-num">W32</td>
+                <td><span class="week-phase-tag pro">Pro</span></td>
+                <td class="week-topic">Kubernetes</td>
+                <td style="color: var(--muted); font-size: 0.8rem">—</td>
+                <td>
+                  <div class="week-deliverable">
+                    Deploy microservices to K8s cluster
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="week-num">W36</td>
+                <td><span class="week-phase-tag pro">Pro</span></td>
+                <td class="week-topic">LLM Integration</td>
+                <td style="color: var(--muted); font-size: 0.8rem">—</td>
+                <td>
+                  <div class="week-deliverable">
+                    AI-powered chatbot API with RAG
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="week-num">W40</td>
+                <td><span class="week-phase-tag pro">Pro</span></td>
+                <td class="week-topic">FAANG Intensive</td>
+                <td style="color: var(--muted); font-size: 0.8rem">
+                  Hard: Trie, union-find, DP
+                </td>
+                <td>
+                  <div class="week-deliverable">
+                    3 full mock interview loops
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="week-num">W44</td>
+                <td><span class="week-phase-tag pro">Pro</span></td>
+                <td class="week-topic">Pro Capstone</td>
+                <td style="color: var(--muted); font-size: 0.8rem">
+                  Final gauntlet
+                </td>
+                <td>
+                  <div class="week-deliverable">
+                    AI cloud app + offer negotiation
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROADMAP -->
+    <div id="roadmap" style="position: relative; z-index: 1">
+      <div class="section">
+        <p class="section-label">// Student Journey</p>
+        <h2 class="section-title">Your Path From<br />Zero to FAANG.</h2>
+        <p class="section-desc">
+          Every student starts at the same place. Where you exit is up to you.
+        </p>
+
+        <div class="roadmap reveal">
+          <div class="rm-step">
+            <div class="rm-left">
+              <div class="rm-week-label">START</div>
+              <div class="rm-week-range">Week 0</div>
+            </div>
+            <div class="rm-center">
+              <div class="rm-circle core">S</div>
+              <div class="rm-line"></div>
+            </div>
+            <div class="rm-right">
+              <h4>Enroll in CS Core</h4>
+              <p>
+                Every student begins here. No prerequisites required — just
+                commitment.
+              </p>
+            </div>
+          </div>
+          <div class="rm-step">
+            <div class="rm-left"><div class="rm-week-range">W1–W7</div></div>
+            <div class="rm-center">
+              <div class="rm-circle core">1</div>
+              <div class="rm-line"></div>
+            </div>
+            <div class="rm-right">
+              <h4>Programming Foundations + DSA Basics</h4>
+              <p>
+                JavaScript, Git, arrays, linked lists, stacks, hash maps, 100+
+                problems.
+              </p>
+            </div>
+          </div>
+          <div class="rm-step">
+            <div class="rm-left"><div class="rm-week-range">W8–W16</div></div>
+            <div class="rm-center">
+              <div class="rm-circle core">2</div>
+              <div class="rm-line"></div>
+            </div>
+            <div class="rm-right">
+              <h4>MERN Full-Stack Development</h4>
+              <p>
+                React, Node.js, Express, MongoDB, PostgreSQL, REST APIs, JWT
+                auth.
+              </p>
+            </div>
+          </div>
+          <div class="rm-step">
+            <div class="rm-left"><div class="rm-week-range">W17–W19</div></div>
+            <div class="rm-center">
+              <div class="rm-circle core">3</div>
+              <div class="rm-line"></div>
+            </div>
+            <div class="rm-right">
+              <h4>Docker + Cloud Fundamentals</h4>
+              <p>
+                Containerization, CI/CD, AWS basics, deploy your first cloud
+                app.
+              </p>
+            </div>
+          </div>
+          <div class="rm-step">
+            <div class="rm-left">
+              <div class="rm-week-label">EXIT 1</div>
+              <div class="rm-week-range">W22</div>
+            </div>
+            <div class="rm-center">
+              <div class="rm-circle gold">✓</div>
+              <div class="rm-line"></div>
+            </div>
+            <div class="rm-right">
+              <h4 style="color: var(--gold)">CS Core Graduate 🏅</h4>
+              <p style="color: var(--gold); opacity: 0.7">
+                Junior / Associate SWE ready. Full-stack skills, deployed
+                project, 150+ DSA solved.
+              </p>
+            </div>
+          </div>
+          <div class="rm-step">
+            <div class="rm-left"><div class="rm-week-range">W23–W27</div></div>
+            <div class="rm-center">
+              <div class="rm-circle pro">4</div>
+              <div class="rm-line"></div>
+            </div>
+            <div class="rm-right">
+              <h4>Advanced DSA — Trees, Graphs, DP</h4>
+              <p>
+                Binary trees, graph algorithms, dynamic programming, 200+
+                medium/hard problems.
+              </p>
+            </div>
+          </div>
+          <div class="rm-step">
+            <div class="rm-left"><div class="rm-week-range">W28–W31</div></div>
+            <div class="rm-center">
+              <div class="rm-circle pro">5</div>
+              <div class="rm-line"></div>
+            </div>
+            <div class="rm-right">
+              <h4>System Design Mastery</h4>
+              <p>
+                Scalability, databases, caching, Kafka, design real FAANG-scale
+                systems.
+              </p>
+            </div>
+          </div>
+          <div class="rm-step">
+            <div class="rm-left"><div class="rm-week-range">W32–W35</div></div>
+            <div class="rm-center">
+              <div class="rm-circle pro">6</div>
+              <div class="rm-line"></div>
+            </div>
+            <div class="rm-right">
+              <h4>Cloud Architecture + Kubernetes</h4>
+              <p>
+                Microservices, K8s, Terraform, IaC, full observability stack.
+              </p>
+            </div>
+          </div>
+          <div class="rm-step">
+            <div class="rm-left"><div class="rm-week-range">W36–W39</div></div>
+            <div class="rm-center">
+              <div class="rm-circle pro">7</div>
+              <div class="rm-line"></div>
+            </div>
+            <div class="rm-right">
+              <h4>AI / ML Integration</h4>
+              <p>
+                LLMs, RAG, ML deployment, build and ship AI-powered products.
+              </p>
+            </div>
+          </div>
+          <div class="rm-step">
+            <div class="rm-left"><div class="rm-week-range">W40–W42</div></div>
+            <div class="rm-center">
+              <div class="rm-circle pro">8</div>
+              <div class="rm-line"></div>
+            </div>
+            <div class="rm-right">
+              <h4>FAANG Interview Intensive</h4>
+              <p>
+                Full mock loops, system design gauntlet, behavioral deep dives,
+                offer negotiation.
+              </p>
+            </div>
+          </div>
+          <div class="rm-step">
+            <div class="rm-left">
+              <div class="rm-week-label">EXIT 2</div>
+              <div class="rm-week-range">W44</div>
+            </div>
+            <div class="rm-center"><div class="rm-circle gold">🏆</div></div>
+            <div class="rm-right">
+              <h4 style="color: var(--gold)">CS Pro Graduate — SDE-1 🚀</h4>
+              <p style="color: var(--gold); opacity: 0.7">
+                FAANG-ready. 500+ problems, 10+ projects, system design fluency,
+                AI skills. Crack Google, Meta, Uber.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <p
+        style="
+          font-family: &quot;Syne&quot;, sans-serif;
+          font-size: 1.2rem;
+          font-weight: 800;
+          margin-bottom: 0.5rem;
+        "
+      >
+        CODEX <span style="color: var(--core-start)">Engineering Program</span>
+      </p>
+      <p>
+        CS Core → 22 Weeks → Junior Role &nbsp;|&nbsp; CS Pro → 44 Weeks → FAANG
+        SDE-1
+      </p>
+      <p style="margin-top: 0.75rem; font-size: 0.75rem">
+        DSA · MERN · Docker · Cloud · AI · System Design · Interview Prep
+      </p>
+    </footer>
+
+    <script>
+      // Intersection Observer for scroll animations
+      const revealEls = document.querySelectorAll(".reveal, .phase-block");
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+              setTimeout(
+                () => {
+                  entry.target.classList.add("visible");
+                },
+                entry.target.classList.contains("phase-block") ? 80 : 0,
+              );
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1 },
+      );
+
+      revealEls.forEach((el) => observer.observe(el));
+    </script>
+    <script>
+      const toggleBtn = document.getElementById("themeToggle");
+
+      // Load saved theme
+      if (localStorage.getItem("theme") === "light") {
+        document.body.classList.add("light-mode");
+        toggleBtn.textContent = "☀️";
+      }
+
+      toggleBtn.addEventListener("click", () => {
+        document.body.classList.toggle("light-mode");
+
+        if (document.body.classList.contains("light-mode")) {
+          localStorage.setItem("theme", "light");
+          toggleBtn.textContent = "☀️";
+        } else {
+          localStorage.setItem("theme", "dark");
+          toggleBtn.textContent = "🌙";
+        }
+      });
+    </script>
+  </body>
 </html>
