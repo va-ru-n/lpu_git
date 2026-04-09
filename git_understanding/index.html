@@ -23,6 +23,860 @@
         --muted: #5a6680;
         --accent: #00d4aa;
       }
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FAANG-Ready Curriculum | CS Core & CS Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #060810;
+    --surface: #0d1117;
+    --surface2: #141b26;
+    --border: rgba(255,255,255,0.07);
+    --core-start: #00d4aa;
+    --core-end: #0099ff;
+    --pro-start: #ff6b35;
+    --pro-end: #ff0080;
+    --gold: #ffd700;
+    --text: #e8edf5;
+    --muted: #5a6680;
+    --accent: #00d4aa;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+  }
+  .hero-glow.g1 {
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,212,170,0.12) 0%, transparent 70%);
+    top: -100px; left: -200px;
+    animation: drift1 12s ease-in-out infinite alternate;
+  }
+  .hero-glow.g2 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(255,0,128,0.10) 0%, transparent 70%);
+    bottom: -50px; right: -150px;
+    animation: drift2 14s ease-in-out infinite alternate;
+  }
+  .hero-glow.g3 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,153,255,0.08) 0%, transparent 70%);
+    top: 40%; left: 50%;
+    transform: translate(-50%,-50%);
+  }
+
+  @keyframes drift1 { from { transform: translate(0,0); } to { transform: translate(60px, 40px); } }
+  @keyframes drift2 { from { transform: translate(0,0); } to { transform: translate(-40px, -60px); } }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    color: var(--core-start);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero h1 .gradient-core {
+    background: linear-gradient(135deg, var(--core-start), var(--core-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero h1 .gradient-pro {
+    background: linear-gradient(135deg, var(--pro-start), var(--pro-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    max-width: 640px;
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .track-pills {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .pill {
+    padding: 0.6rem 1.4rem;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    border: 1px solid;
+    cursor: default;
+  }
+  .pill.core {
+    background: rgba(0,212,170,0.08);
+    border-color: rgba(0,212,170,0.3);
+    color: var(--core-start);
+  }
+  .pill.pro {
+    background: rgba(255,107,53,0.08);
+    border-color: rgba(255,107,53,0.3);
+    color: var(--pro-start);
+  }
+  .pill.faang {
+    background: rgba(255,215,0,0.08);
+    border-color: rgba(255,215,0,0.3);
+    color: var(--gold);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTION WRAPPER ── */
+  .section {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    color: var(--muted);
+    max-width: 560px;
+    font-size: 0.95rem;
+    margin-bottom: 3rem;
+  }
+
+  /* ── TRACK OVERVIEW CARDS ── */
+  .tracks-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  @media (max-width: 768px) { .tracks-grid { grid-template-columns: 1fr; } }
+
+  .track-card {
+    position: relative;
+    border-radius: 20px;
+    padding: 2.5rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .track-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+  }
+
+  .track-card.core::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,212,170,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .track-card.pro::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,107,53,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .track-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .track-badge.core { background: rgba(0,212,170,0.15); color: var(--core-start); }
+  .track-badge.pro  { background: rgba(255,107,53,0.15);  color: var(--pro-start); }
+
+  .track-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.7rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+  .track-card .duration {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .track-card.core .duration { color: var(--core-start); }
+  .track-card.pro  .duration { color: var(--pro-start); }
+
+  .track-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+  .outcome-tag {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: rgba(255,215,0,0.1);
+    color: var(--gold);
+    border: 1px solid rgba(255,215,0,0.2);
+  }
+
+  /* ── PHASE TIMELINE ── */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--core-start), var(--core-end), var(--pro-start), var(--pro-end));
+    border-radius: 2px;
+  }
+
+  .phase-block {
+    position: relative;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    transform: translateX(-12px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .phase-block.visible { opacity: 1; transform: translateX(0); }
+
+  .phase-dot {
+    position: absolute;
+    left: -2.35rem;
+    top: 0.4rem;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+  }
+  .phase-dot.core { background: var(--core-start); box-shadow: 0 0 12px rgba(0,212,170,0.6); }
+  .phase-dot.pro  { background: var(--pro-start);  box-shadow: 0 0 12px rgba(255,107,53,0.6); }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .phase-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .phase-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .phase-weeks {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    background: var(--surface2);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .phase-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .topic-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.875rem;
+  }
+  .topic-item .icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+  }
+  .topic-item .label { color: var(--text); font-weight: 400; }
+  .topic-item .sublabel { color: var(--muted); font-size: 0.78rem; display: block; margin-top: 0.1rem; }
+
+  /* ── DIVIDER ── */
+  .track-divider {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 3rem 0;
+  }
+  .track-divider::before, .track-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .track-divider-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    background: var(--surface);
+  }
+
+  /* ── COMPANY LOGOS MARQUEE ── */
+  .marquee-section {
+    position: relative;
+    padding: 3rem 0;
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .marquee-label {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+  .marquee-track {
+    display: flex;
+    gap: 3rem;
+    animation: marquee 25s linear infinite;
+    width: max-content;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .company-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1.5rem;
+    border-radius: 100px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--text);
+  }
+  .company-chip .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  /* ── SKILLS GRID ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .skill-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .skill-card:hover {
+    border-color: rgba(255,255,255,0.15);
+    transform: translateY(-2px);
+  }
+
+  .skill-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.75rem;
+  }
+  .skill-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .skill-card p {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .skill-level {
+    display: flex;
+    gap: 0.3rem;
+    margin-top: 0.75rem;
+  }
+  .level-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+  .level-dot.active.core { background: var(--core-start); }
+  .level-dot.active.pro  { background: var(--pro-start); }
+
+  /* ── WEEKLY BREAKDOWN TABLE ── */
+  .week-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  .week-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .week-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  .week-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .week-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .week-phase-tag {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .week-phase-tag.core { background: rgba(0,212,170,0.12); color: var(--core-start); }
+  .week-phase-tag.pro  { background: rgba(255,107,53,0.12);  color: var(--pro-start); }
+
+  .week-topic { font-weight: 400; color: var(--text); }
+  .week-deliverable { color: var(--muted); font-size: 0.78rem; margin-top: 0.2rem; }
+
+  /* ── ROADMAP PATH ── */
+  .roadmap {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .rm-step {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .rm-left {
+    width: 140px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-right: 1.5rem;
+    padding-top: 0.25rem;
+  }
+
+  .rm-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 24px;
+    flex-shrink: 0;
+  }
+  .rm-circle {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    border: 2px solid;
+    z-index: 1;
+  }
+  .rm-circle.core {
+    background: rgba(0,212,170,0.15);
+    border-color: var(--core-start);
+    color: var(--core-start);
+  }
+  .rm-circle.pro {
+    background: rgba(255,107,53,0.15);
+    border-color: var(--pro-start);
+    color: var(--pro-start);
+  }
+  .rm-circle.gold {
+    background: rgba(255,215,0,0.15);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .rm-line {
+    flex: 1;
+    width: 2px;
+    background: var(--border);
+    margin: 4px 0;
+  }
+
+  .rm-right {
+    flex: 1;
+    padding: 0 0 2rem 1.5rem;
+  }
+  .rm-right h4 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .rm-right p { color: var(--muted); font-size: 0.85rem; }
+
+  .rm-week-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    text-align: right;
+  }
+  .rm-week-range {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-align: right;
+    color: var(--text);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+  footer strong { color: var(--text); }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── STICKY NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: rgba(6,8,16,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .nav-logo span { color: var(--core-start); }
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  /* ── HAMBURGER MENU ── */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    z-index: 101;
+  }
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .hamburger.active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .hamburger.active span:nth-child(2) {
+    opacity: 0;
+  }
+  .hamburger.active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  @media (max-width: 600px) {
+    .hamburger { display: flex; }
+    .nav-links {
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 260px;
+      height: 100vh;
+      background: rgba(13,17,23,0.97);
+      backdrop-filter: blur(20px);
+      padding: 5rem 2rem 2rem;
+      gap: 1.5rem;
+      border-left: 1px solid var(--border);
+      transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+      z-index: 100;
+    }
+    .nav-links.open {
+      right: 0;
+    }
+    .nav-links a {
+      font-size: 0.85rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 99;
+    }
+    .nav-overlay.open {
+      display: block;
+    }
+  }
+
+  /* ── STAT STRIP ── */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 4rem;
+  }
+  .stat-item {
+    padding: 1.5rem;
+    border-right: 1px solid var(--border);
+    text-align: center;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .grad-core { background: linear-gradient(135deg, var(--core-start), var(--core-end)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .grad-pro  { background: linear-gradient(135deg, var(--pro-start), var(--pro-end));   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .grad-gold { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">CODE<span>X</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#curriculum">Curriculum</a></li>
+    <li><a href="#weekly">Weekly Plan</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</nav>
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow g1"></div>
+  <div class="hero-glow g2"></div>
+  <div class="hero-glow g3"></div>
+  <p class="eyebrow">// FAANG-Ready Engineering Curriculum</p>
+  <h1>
+    <span class="gradient-core">CS Core</span><br/>
+    <span style="color:var(--muted); font-size:0.5em; font-weight:400; letter-spacing:-0.01em;">CONTINUES INTO</span><br/>
+    <span class="gradient-pro">CS Pro</span>
+  </h1>
+  <p class="hero-sub">A dual-track, 44-week program engineered to take you from zero to landing SDE-1 roles at Google, Meta, Uber, and top-tier tech companies.</p>
+  <div class="track-pills">
+    <div class="pill core">22 Weeks → Junior / Associate</div>
+    <div class="pill pro">44 Weeks → FAANG SDE-1</div>
+    <div class="pill faang">DSA · MERN · Cloud · AI · Docker</div>
+  </div>
+</section>
+
+<!-- OVERVIEW -->
+<div id="overview" style="position:relative;z-index:1;">
+  <div class="section">
+    <p class="section-label">// Track Overview</p>
+    <h2 class="section-title">Two Tracks.<br/>One Continuous Journey.</h2>
+    <p class="section-desc">Start with CS Core. Exit early with confidence, or push through CS Pro and compete for the biggest roles in the industry.</p>
+
+    <div class="tracks-grid reveal">
+      <div class="track-card core">
+        <div class="track-badge core">📘 CS Core</div>
+        <h3>Foundation &amp; Fundamentals</h3>
+        <div class="duration">22 <span style="font-size:1rem;color:var(--muted);">weeks</span></div>
+        <p>Master the fundamentals of DSA, full-stack development with MERN, and modern deployment practices. Graduate ready for junior/associate roles at startups and mid-scale companies.</p>
+        <div class="outcome-tag">🎯 Junior / Associate SWE</div>
+      </div>
+      <div class="track-card pro">
+        <div class="track-badge pro">🔥 CS Pro</div>
+        <h3>Advanced &amp; Interview-Ready</h3>
+        <div class="duration">44 <span style="font-size:1rem;color:var(--muted);">weeks</span></div>
+        <p>Built directly on top of CS Core. Dive deep into advanced DSA, system design, AI/ML integration, cloud architecture and everything it takes to crack FAANG-level interviews.</p>
+        <div class="outcome-tag">🏆 SDE-1 at FAANG / Unicorns</div>
+      </div>
+    </div>
 
       *,
       *::before,
@@ -2395,4 +3249,54 @@
       });
     </script>
   </body>
+</html>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:0.5rem;">CODEX <span style="color:var(--core-start);">Engineering Program</span></p>
+  <p>CS Core → 22 Weeks → Junior Role &nbsp;|&nbsp; CS Pro → 44 Weeks → FAANG SDE-1</p>
+  <p style="margin-top:0.75rem;font-size:0.75rem;">DSA · MERN · Docker · Cloud · AI · System Design · Interview Prep</p>
+</footer>
+
+<script>
+  // Intersection Observer for scroll animations
+  const revealEls = document.querySelectorAll('.reveal, .phase-block');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, entry.target.classList.contains('phase-block') ? 80 : 0);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  revealEls.forEach(el => observer.observe(el));
+
+  // Mobile hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  const navOverlay = document.getElementById('navOverlay');
+
+  function toggleMenu() {
+    hamburger.classList.toggle('active');
+    navLinks.classList.toggle('open');
+    navOverlay.classList.toggle('open');
+    document.body.style.overflow = navLinks.classList.contains('open') ? 'hidden' : '';
+  }
+
+  hamburger.addEventListener('click', toggleMenu);
+  navOverlay.addEventListener('click', toggleMenu);
+
+  // Close menu when a link is clicked
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      if (navLinks.classList.contains('open')) toggleMenu();
+    });
+  });
+</script>
+</body>
 </html>
