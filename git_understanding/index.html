@@ -194,6 +194,54 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
+  /* ── TEXT REVEAL ANIMATION ── */
+  .split-text {
+    overflow: hidden;
+    display: inline-block;
+  }
+  .split-text .char {
+    display: inline-block;
+    transform: translateY(110%);
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .split-text.visible .char {
+    transform: translateY(0);
+  }
+
+  /* ── MAGNETIC EFFECT ── */
+  .magnetic {
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  /* ── TILT EFFECT ── */
+  .tilt-card {
+    transition: transform 0.1s ease-out;
+    transform-style: preserve-3d;
+  }
+  .tilt-card > * {
+    transform: translateZ(20px);
+  }
+
+  /* ── BUTTON SHIMMER ── */
+  .pill {
+    position: relative;
+    overflow: hidden;
+  }
+  .pill::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: rotate(45deg);
+    transition: 0.5s;
+    left: -100%;
+  }
+  .pill:hover::after {
+    left: 100%;
+  }
+
   /* ── SECTION WRAPPER ── */
   .section {
     position: relative;
@@ -243,11 +291,11 @@
     overflow: hidden;
     border: 1px solid var(--border);
     background: var(--surface);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   }
   .track-card:hover {
-    transform: translateY(-4px);
     box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+    border-color: rgba(255,255,255,0.15);
   }
 
   .track-card.core::before {
@@ -324,6 +372,12 @@
     width: 2px;
     background: linear-gradient(to bottom, var(--core-start), var(--core-end), var(--pro-start), var(--pro-end));
     border-radius: 2px;
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .timeline.visible::before {
+    transform: scaleY(1);
   }
 
   .phase-block {
@@ -780,6 +834,18 @@
     }
   }
 
+  /* ── SCROLL PROGRESS BAR ── */
+  #scroll-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 4px;
+    background: linear-gradient(135deg, var(--core-start), var(--pro-start));
+    z-index: 10000;
+    transition: width 0.1s ease-out;
+  }
+
   /* ── STAT STRIP ── */
   .stat-strip {
     display: grid;
@@ -814,18 +880,95 @@
   .grad-core { background: linear-gradient(135deg, var(--core-start), var(--core-end)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .grad-pro  { background: linear-gradient(135deg, var(--pro-start), var(--pro-end));   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .grad-gold { color: var(--gold); }
+
+  /* ── FAQ SECTION ── */
+  .faq-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .faq-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .faq-item:hover { border-color: rgba(255,255,255,0.15); }
+  .faq-question {
+    padding: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+  }
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s;
+    padding: 0 1.5rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .faq-item.active .faq-answer {
+    max-height: 500px;
+    padding-bottom: 1.5rem;
+  }
+  .faq-icon {
+    font-family: 'JetBrains Mono', monospace;
+    transition: transform 0.3s;
+  }
+  .faq-item.active .faq-icon {
+    transform: rotate(45deg);
+  }
+
+  /* ── BACK TO TOP ── */
+  #backToTop {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: rgba(13,17,23,0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+  }
+  #backToTop.show {
+    opacity: 1;
+    visibility: visible;
+  }
+  #backToTop:hover {
+    background: var(--core-start);
+    color: var(--bg);
+    transform: translateY(-5px);
+  }
 </style>
 </head>
 <body>
+<div id="scroll-progress-bar"></div>
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">CODE<span>X</span></div>
+  <div class="nav-logo magnetic">CODE<span>X</span></div>
   <ul class="nav-links" id="navLinks">
     <li><a href="#overview">Overview</a></li>
     <li><a href="#curriculum">Curriculum</a></li>
     <li><a href="#weekly">Weekly Plan</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#faq">FAQ</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu">
     <span></span>
@@ -841,16 +984,16 @@
   <div class="hero-glow g2"></div>
   <div class="hero-glow g3"></div>
   <p class="eyebrow">// FAANG-Ready Engineering Curriculum</p>
-  <h1>
+  <h1 class="split-text-target">
     <span class="gradient-core">CS Core</span><br/>
     <span style="color:var(--muted); font-size:0.5em; font-weight:400; letter-spacing:-0.01em;">CONTINUES INTO</span><br/>
     <span class="gradient-pro">CS Pro</span>
   </h1>
   <p class="hero-sub">A dual-track, 44-week program engineered to take you from zero to landing SDE-1 roles at Google, Meta, Uber, and top-tier tech companies.</p>
   <div class="track-pills">
-    <div class="pill core">22 Weeks → Junior / Associate</div>
-    <div class="pill pro">44 Weeks → FAANG SDE-1</div>
-    <div class="pill faang">DSA · MERN · Cloud · AI · Docker</div>
+    <div class="pill core magnetic">22 Weeks → Junior / Associate</div>
+    <div class="pill pro magnetic">44 Weeks → FAANG SDE-1</div>
+    <div class="pill faang magnetic">DSA · MERN · Cloud · AI · Docker</div>
   </div>
 </section>
 
@@ -862,14 +1005,14 @@
     <p class="section-desc">Start with CS Core. Exit early with confidence, or push through CS Pro and compete for the biggest roles in the industry.</p>
 
     <div class="tracks-grid reveal">
-      <div class="track-card core">
+      <div class="track-card core tilt-card">
         <div class="track-badge core">📘 CS Core</div>
         <h3>Foundation &amp; Fundamentals</h3>
         <div class="duration">22 <span style="font-size:1rem;color:var(--muted);">weeks</span></div>
         <p>Master the fundamentals of DSA, full-stack development with MERN, and modern deployment practices. Graduate ready for junior/associate roles at startups and mid-scale companies.</p>
         <div class="outcome-tag">🎯 Junior / Associate SWE</div>
       </div>
-      <div class="track-card pro">
+      <div class="track-card pro tilt-card">
         <div class="track-badge pro">🔥 CS Pro</div>
         <h3>Advanced &amp; Interview-Ready</h3>
         <div class="duration">44 <span style="font-size:1rem;color:var(--muted);">weeks</span></div>
@@ -3181,6 +3324,100 @@
             </div>
           </div>
         </div>
+<!-- FAQ SECTION -->
+<div id="faq" style="position:relative;z-index:1;background:var(--bg); border-top:1px solid var(--border);">
+  <div class="section">
+    <p class="section-label">// Common Questions</p>
+    <h2 class="section-title">Frequently Asked Questions.</h2>
+    <p class="section-desc">Everything you need to know about the curriculum, prerequisites, and outcomes.</p>
+    
+    <div class="faq-container reveal">
+      <div class="faq-item">
+        <div class="faq-question">What are the prerequisites for this program? <span class="faq-icon">+</span></div>
+        <div class="faq-answer">For CS Core, there are zero prerequisites. We start from the absolute basics of programming. For CS Pro, you should have a solid grasp of the topics covered in CS Core (MERN stack fundamentals and basic DSA).</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Can I take only the CS Core track? <span class="faq-icon">+</span></div>
+        <div class="faq-answer">Yes, absolutely. CS Core is a complete program on its own that qualifies you for Junior/Associate SWE roles. You can exit after 22 weeks with full certification.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Are there projects included in the curriculum? <span class="faq-icon">+</span></div>
+        <div class="faq-answer">Yes, we build 10+ real-world projects, including a full MERN stack SaaS, a containerized microservices app, and an AI-powered product in the Pro track.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">How are the interview sessions conducted? <span class="faq-icon">+</span></div>
+        <div class="faq-answer">Phase 11 and 12 focus on live mock interviews (Technical, System Design, and Behavioral) modeled after the exact processes at Google, Meta, and Amazon.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="backToTop" class="magnetic" title="Back to Top">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+</div>
+
+<!-- ROADMAP -->
+<div id="roadmap" style="position:relative;z-index:1;">
+  <div class="section">
+    <p class="section-label">// Student Journey</p>
+    <h2 class="section-title">Your Path From<br/>Zero to FAANG.</h2>
+    <p class="section-desc">Every student starts at the same place. Where you exit is up to you.</p>
+
+    <div class="roadmap reveal">
+      <div class="rm-step">
+        <div class="rm-left"><div class="rm-week-label">START</div><div class="rm-week-range">Week 0</div></div>
+        <div class="rm-center"><div class="rm-circle core">S</div><div class="rm-line"></div></div>
+        <div class="rm-right"><h4>Enroll in CS Core</h4><p>Every student begins here. No prerequisites required — just commitment.</p></div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-left"><div class="rm-week-range">W1–W7</div></div>
+        <div class="rm-center"><div class="rm-circle core">1</div><div class="rm-line"></div></div>
+        <div class="rm-right"><h4>Programming Foundations + DSA Basics</h4><p>JavaScript, Git, arrays, linked lists, stacks, hash maps, 100+ problems.</p></div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-left"><div class="rm-week-range">W8–W16</div></div>
+        <div class="rm-center"><div class="rm-circle core">2</div><div class="rm-line"></div></div>
+        <div class="rm-right"><h4>MERN Full-Stack Development</h4><p>React, Node.js, Express, MongoDB, PostgreSQL, REST APIs, JWT auth.</p></div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-left"><div class="rm-week-range">W17–W19</div></div>
+        <div class="rm-center"><div class="rm-circle core">3</div><div class="rm-line"></div></div>
+        <div class="rm-right"><h4>Docker + Cloud Fundamentals</h4><p>Containerization, CI/CD, AWS basics, deploy your first cloud app.</p></div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-left"><div class="rm-week-label">EXIT 1</div><div class="rm-week-range">W22</div></div>
+        <div class="rm-center"><div class="rm-circle gold">✓</div><div class="rm-line"></div></div>
+        <div class="rm-right"><h4 style="color:var(--gold);">CS Core Graduate 🏅</h4><p style="color:var(--gold);opacity:0.7;">Junior / Associate SWE ready. Full-stack skills, deployed project, 150+ DSA solved.</p></div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-left"><div class="rm-week-range">W23–W27</div></div>
+        <div class="rm-center"><div class="rm-circle pro">4</div><div class="rm-line"></div></div>
+        <div class="rm-right"><h4>Advanced DSA — Trees, Graphs, DP</h4><p>Binary trees, graph algorithms, dynamic programming, 200+ medium/hard problems.</p></div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-left"><div class="rm-week-range">W28–W31</div></div>
+        <div class="rm-center"><div class="rm-circle pro">5</div><div class="rm-line"></div></div>
+        <div class="rm-right"><h4>System Design Mastery</h4><p>Scalability, databases, caching, Kafka, design real FAANG-scale systems.</p></div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-left"><div class="rm-week-range">W32–W35</div></div>
+        <div class="rm-center"><div class="rm-circle pro">6</div><div class="rm-line"></div></div>
+        <div class="rm-right"><h4>Cloud Architecture + Kubernetes</h4><p>Microservices, K8s, Terraform, IaC, full observability stack.</p></div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-left"><div class="rm-week-range">W36–W39</div></div>
+        <div class="rm-center"><div class="rm-circle pro">7</div><div class="rm-line"></div></div>
+        <div class="rm-right"><h4>AI / ML Integration</h4><p>LLMs, RAG, ML deployment, build and ship AI-powered products.</p></div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-left"><div class="rm-week-range">W40–W42</div></div>
+        <div class="rm-center"><div class="rm-circle pro">8</div><div class="rm-line"></div></div>
+        <div class="rm-right"><h4>FAANG Interview Intensive</h4><p>Full mock loops, system design gauntlet, behavioral deep dives, offer negotiation.</p></div>
+      </div>
+      <div class="rm-step">
+        <div class="rm-left"><div class="rm-week-label">EXIT 2</div><div class="rm-week-range">W44</div></div>
+        <div class="rm-center"><div class="rm-circle gold">🏆</div></div>
+        <div class="rm-right"><h4 style="color:var(--gold);">CS Pro Graduate — SDE-1 🚀</h4><p style="color:var(--gold);opacity:0.7;">FAANG-ready. 500+ problems, 10+ projects, system design fluency, AI skills. Crack Google, Meta, Uber.</p></div>
       </div>
     </div>
 
@@ -3261,20 +3498,138 @@
 </footer>
 
 <script>
+  // Split Text Animation
+  function splitText() {
+    const targets = document.querySelectorAll('.split-text-target');
+    targets.forEach(target => {
+      const content = target.innerHTML;
+      target.innerHTML = '';
+      
+      // Handle <br> and nested spans
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = content;
+      
+      Array.from(tempDiv.childNodes).forEach(node => {
+        if (node.nodeType === 3) { // Text node
+          const text = node.textContent;
+          text.split('').forEach((char, i) => {
+            const span = document.createElement('span');
+            span.className = 'split-text';
+            span.innerHTML = `<span class="char" style="transition-delay: ${i * 30}ms">${char === ' ' ? '&nbsp;' : char}</span>`;
+            target.appendChild(span);
+          });
+        } else {
+          // Clone the element (like <br> or <span>)
+          const clone = node.cloneNode(true);
+          if (clone.tagName === 'SPAN') {
+             const innerText = clone.textContent;
+             clone.textContent = '';
+             innerText.split('').forEach((char, i) => {
+                const charSpan = document.createElement('span');
+                charSpan.className = 'split-text';
+                charSpan.innerHTML = `<span class="char" style="transition-delay: ${i * 30}ms">${char === ' ' ? '&nbsp;' : char}</span>`;
+                clone.appendChild(charSpan);
+             });
+          }
+          target.appendChild(clone);
+        }
+      });
+      
+      setTimeout(() => {
+        target.querySelectorAll('.split-text').forEach(s => s.classList.add('visible'));
+      }, 100);
+    });
+  }
+  splitText();
+
+  // Magnetic Effect
+  const magneticEls = document.querySelectorAll('.magnetic');
+  magneticEls.forEach(el => {
+    el.addEventListener('mousemove', (e) => {
+      const { offsetX: x, offsetY: y } = e;
+      const { offsetWidth: width, offsetHeight: height } = el;
+      const moveX = (x - width / 2) / 2;
+      const moveY = (y - height / 2) / 2;
+      el.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    });
+    el.addEventListener('mouseleave', () => {
+      el.style.transform = 'translate(0, 0)';
+    });
+  });
+
+  // 3D Tilt Effect
+  const tiltCards = document.querySelectorAll('.tilt-card');
+  tiltCards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = (centerY - y) / 10;
+      const rotateY = (x - centerX) / 10;
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+    });
+  });
+
   // Intersection Observer for scroll animations
-  const revealEls = document.querySelectorAll('.reveal, .phase-block');
+  const revealEls = document.querySelectorAll('.reveal, .phase-block, .timeline');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
       if (entry.isIntersecting) {
-        setTimeout(() => {
+        if (entry.target.classList.contains('timeline')) {
           entry.target.classList.add('visible');
-        }, entry.target.classList.contains('phase-block') ? 80 : 0);
+        } else {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, entry.target.classList.contains('phase-block') ? 80 : 0);
+        }
         observer.unobserve(entry.target);
       }
     });
   }, { threshold: 0.1 });
 
   revealEls.forEach(el => observer.observe(el));
+
+  // FAQ Toggle
+  document.querySelectorAll('.faq-question').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.parentElement;
+      const isActive = item.classList.contains('active');
+      
+      // Close all other items
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+      
+      if (!isActive) {
+        item.classList.add('active');
+      }
+    });
+  });
+
+  // Scroll Progress Bar
+  const progressBar = document.getElementById('scroll-progress-bar');
+  window.addEventListener('scroll', () => {
+    const scrollTotal = document.documentElement.scrollTop || document.body.scrollTop;
+    const heightTotal = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrollPosition = (scrollTotal / heightTotal) * 100;
+    progressBar.style.width = scrollPosition + '%';
+  });
+
+  // Back to Top
+  const btt = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 500) {
+      btt.classList.add('show');
+    } else {
+      btt.classList.remove('show');
+    }
+  });
+  btt.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 
   // Mobile hamburger menu
   const hamburger = document.getElementById('hamburger');
